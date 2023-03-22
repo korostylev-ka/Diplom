@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NeWork</string>
+    <string name="hello">Привет, Мир!</string>
+    <string name="description_post_author_avatar">Аватар автора поста</string>
+    <string name="description_post_menu">Меню поста</string>
+    <string name="description_post_like">Нравится</string>
+    <string name="description_post_share">Поделиться</string>
+    <string name="description_post_save">Сохранить</string>
+    <string name="description_post_attachment">Присоединенные медиа файлы</string>
+    <string name="description_post_video">Видео</string>
+    <string name="menu_edit">Изменить</string>
+    <string name="menu_remove">Удалить</string>
+    <string name="menu_save">Сохранить</string>
+    <string name="post_text">Текст поста</string>
+    <string name="error_empty_content">Контент не может быть пустым</string>
+    <string name="chooser_share_post">Поделиться</string>
+    <string name="add_post">Добавить пост</string>
+    <string name="retry_loading">Повторить</string>
+    <string name="empty_posts">Постов нет.\nЕсли создадите новый пост, то он появится здесь</string>
+    <string name="error_loading">Не удалось загрузить данные</string>
+    <string name="save">Сохранить</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="description_select_photo">Выбрать фото</string>
+    <string name="description_take_photo">Сделать фото</string>
+    <string name="description_photo">Фото</string>
+    <string name="remove">Удалить</string>
+    <string name="sign_in">Вход</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_out">Выход</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
+    <string name="last_week">На прошлой неделе</string>
+    <string name="long_ago">Давно</string>
+    <string name="not_autorized">Вы не зарегистрированы</string>
+    <string name="login_input">Логин</string>
+    <string name="password_input">Пароль</string>
+    <string name="name_input">Имя пользователя</string>
+    <string name="login">Войти</string>
+    <string name="welcome">Добро пожаловать в социальную сеть NEWORK</string>
+    <string name="author_by">Разработано К.Коростылев(k.korostylevgmail.com)</string>
+    <string name="wrong_login_or_password">Неверные логин или пароль</string>
+    <string name="not_registered">Еще не зарегистрированы?</string>
+    <string name="join">Присоединяйся к NeWork</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="error">Что-то пошло не так. Попробуйте позже</string>
+    <string name="registration_success">Успешная регистрация</string>
+    <string name="min_length">Минимальное количество символов: 1</string>
+
+</resources>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "504859994676",
+    "project_id": "nework-12ffc",
+    "storage_bucket": "nework-12ffc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504859994676:android:f2149bc2a44ce998dfb861",
+        "android_client_info": {
+          "package_name": "ru.netology.nework"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504859994676-dqr1osi54r9e31efp8ertrcjqpbeugea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX9cgFXrOyHRf7YoNyD19auNtIXOtNlS8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504859994676-dqr1osi54r9e31efp8ertrcjqpbeugea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

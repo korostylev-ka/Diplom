@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/feedFragment">
+
+    <fragment
+        android:id="@+id/feedFragment"
+        android:name="ru.netology.nework.ui.FeedFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed">
+        <!-- Переход на страницу создания поста-->
+        <action
+            android:id="@+id/action_feedFragment_to_newPostFragment"
+            app:destination="@id/newPostFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <!-- Переход на страницу аутентификации-->
+        <action
+            android:id="@+id/action_feedFragment_to_authFragment"
+            app:destination="@id/authFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <!-- Переход на страницу регистрации-->
+        <action
+            android:id="@+id/action_feedFragment_to_regFragment"
+            app:destination="@id/registrationFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <!-- Фрагмент страницы регистрации-->
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="ru.netology.nework.ui.RegFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" >
+        <!-- Переход на страницу постов-->
+        <action
+            android:id="@+id/action_regFragment_to_feedFragment"
+            app:destination="@id/feedFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_regFragment_to_authFragment"
+            app:destination="@id/authFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="ru.netology.nework.ui.AuthFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_auth">
+        <!-- Переход со страницы  авторизации на страницу с записями-->
+        <action
+            android:id="@+id/action_authFragment_to_feedFragment"
+            app:destination="@id/feedFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <!-- Переход со страницы  авторизации на страницу регистрации-->
+        <action
+            android:id="@+id/action_authFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <!-- Фрагмент нового поста-->
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="ru.netology.nework.ui.NewPostFragment"
+        android:label="fragment_new_post"
+        tools:layout="@layout/fragment_new_post" />
+
+</navigation>
