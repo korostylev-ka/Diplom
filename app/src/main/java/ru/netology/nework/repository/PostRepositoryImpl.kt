@@ -4,12 +4,8 @@ import androidx.paging.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.http.Multipart
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
@@ -22,9 +18,7 @@ import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.AppError
 import ru.netology.nework.error.NetworkError
 import ru.netology.nework.error.UnknownError
-import java.io.File
 import java.io.IOException
-import java.sql.Timestamp
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -57,6 +51,23 @@ class PostRepositoryImpl @Inject constructor(
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             postDao.insert(body.toEntity())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+    //получаем пост по id
+    override suspend fun getPostById(id: Long): Post {
+        try {
+            //val post = postDao.getPost(id).toDto()
+            //println("УСПЕШНО")
+            val response = apiService.getById(id)
+            return response.body() ?: throw ApiError(response.code(), response.message())
+            //return post
+
+
+
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {

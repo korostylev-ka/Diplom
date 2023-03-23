@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name="ru.netology.nework.application.NMediaApplication"
+        android:name="ru.netology.nework.application.NeWorkApplication"
         android:usesCleartextTraffic="${usesCleartextTraffic}">
         <activity
             android:name="ru.netology.nework.ui.AppActivity"

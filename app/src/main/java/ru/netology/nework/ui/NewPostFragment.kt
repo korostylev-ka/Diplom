@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
@@ -46,6 +47,10 @@ class NewPostFragment : Fragment() {
 
         binding.edit.requestFocus()
 
+        lifecycleScope.launchWhenCreated {
+            requireActivity().setTitle(R.string.new_post)
+        }
+
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -59,6 +64,21 @@ class NewPostFragment : Fragment() {
                     Activity.RESULT_OK -> viewModel.changePhoto(it.data?.data)
                 }
             }
+
+        val pickVidepLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    ImagePicker.RESULT_ERROR -> {
+                        Snackbar.make(
+                            binding.root,
+                            ImagePicker.getError(it.data),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                    Activity.RESULT_OK -> viewModel.changePhoto(it.data?.data)
+                }
+            }
+
 
         binding.pickPhoto.setOnClickListener {
             ImagePicker.with(this)

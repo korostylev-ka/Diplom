@@ -21,6 +21,8 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentFeedBinding
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
+import ru.netology.nework.ui.AuthFragment.Companion.textArg
+import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
@@ -41,8 +43,13 @@ class FeedFragment : Fragment() {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
         val adapter = PostsAdapter(object : OnInteractionListener {
+            //редактирование поста
             override fun onEdit(post: Post) {
-                viewModel.edit(post)
+                val bundle = Bundle()
+                bundle.putLong("id", post.id)
+                //переходим на страницу редактирования, передавая в поле логин значение id поста
+                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, EditPostFragment.createArguments(post.id)
+                )
             }
 
             override fun onLike(post: Post) {
@@ -66,7 +73,6 @@ class FeedFragment : Fragment() {
             }
         })
 
-        //binding.list.adapter = adapter
         binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
             header = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
                 override fun onRetry() {

@@ -1,12 +1,16 @@
 package ru.netology.nework.adapter
 
 import android.net.Uri
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.MediaController
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
+
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +22,8 @@ import ru.netology.nework.databinding.HeaderBinding
 import ru.netology.nework.databinding.SeparatorDateItemBinding
 import ru.netology.nework.dto.*
 import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.ui.AuthFragment.Companion.textArg
+import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 
@@ -49,7 +55,6 @@ class PostsAdapter(
             else -> throw IllegalArgumentException("unknown item type")
         }
     }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -85,164 +90,160 @@ class PostsAdapter(
             }
         }
     }
-}
 
-class PostViewHolder(
-    private val binding: CardPostBinding,
-    private val onInteractionListener: OnInteractionListener,
-) : RecyclerView.ViewHolder(binding.root) {
+    class PostViewHolder(
+        private val binding: CardPostBinding,
+        private val onInteractionListener: OnInteractionListener,
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(post: Post) {
-        binding.apply {
+        fun bind(post: Post) {
+            binding.apply {
 
-            author.text = post.author
-            published.text = post.published
-            content.text = post.content
-            //если вложений нет, view невидима и не занимает места
-            if (post.attachment == null) {
-                attachment.isVisible = false
-                //если есть вложение
-            } else {
-                when (post.attachment.type) {
-                    //если вложение - изображение
-                    AttachmentType.IMAGE -> {
-                        attachment.isVisible = true
-                        Glide.with(binding.attachment)
-                            .load(post.attachment.url)
-                            .timeout(10_000)
-                            .into(binding.attachment)
-                    }
-                    //если вложение - аудио
-                    AttachmentType.AUDIO -> {
-                        attachment.isVisible = true
-                        attachment.setImageResource(R.drawable.audio_icon)
-                        attachment.setOnClickListener {
-                            mediaObserver.apply {
-                                player?.setDataSource(
-                                    post.attachment.url
+                author.text = post.author
+                published.text = post.published
+                content.text = post.content
+                //если вложений нет, view невидима и не занимает места
+                if (post.attachment == null) {
+                    attachment.isVisible = false
+                    //если есть вложение
+                } else {
+                    when (post.attachment.type) {
+                        //если вложение - изображение
+                        AttachmentType.IMAGE -> {
+                            attachment.isVisible = true
+                            Glide.with(binding.attachment)
+                                .load(post.attachment.url)
+                                .timeout(10_000)
+                                .into(binding.attachment)
+                        }
+                        //если вложение - аудио
+                        AttachmentType.AUDIO -> {
+                            attachment.isVisible = true
+                            attachment.setImageResource(R.drawable.audio_icon)
+                            attachment.setOnClickListener {
+                                mediaObserver.apply {
+                                    player?.setDataSource(
+                                        post.attachment.url
+                                    )
+                                }.play()
+                            }
+                        }
+                        AttachmentType.VIDEO -> {
+                            video.apply {
+                                setMediaController(MediaController(context))
+                                setVideoURI(
+                                    Uri.parse(post.attachment.url)
                                 )
-                            }.play()
-                        }
-                    }
-                    AttachmentType.VIDEO -> {
-                        video.apply {
-                            setMediaController(MediaController(context))
-                            setVideoURI(
-                                Uri.parse(post.attachment.url)
-                            )
-                            setOnPreparedListener {
-                                start()
+                                setOnPreparedListener {
+                                    start()
+                                }
+                                setOnCompletionListener {
+                                    stopPlayback()
+                                }
                             }
-                            setOnCompletionListener {
-                                stopPlayback()
+
+                            //attachment.setImageURI(Uri.parse(post.attachment.url))
+                            attachment.apply {
+
                             }
-                        }
-
-                        //attachment.setImageURI(Uri.parse(post.attachment.url))
-                        attachment.apply {
 
                         }
-
+                        else -> attachment.isVisible = false
                     }
-                    else -> attachment.isVisible = false
-                }
-                //если тип вложения - изображение
-                /*if (post.attachment.type == AttachmentType.IMAGE) {
+                    //если тип вложения - изображение
+                    /*if (post.attachment.type == AttachmentType.IMAGE) {
 
                 }*/
 
 
-            }
-            if (post.authorAvatar != null) avatar.loadCircleCrop(post.authorAvatar)
-            else avatar.setImageResource(R.drawable.person_empty)
-            //like.isChecked = post.likedByMe
-            //like.text = "${post.likes}"
+                }
+                if (post.authorAvatar != null) avatar.loadCircleCrop(post.authorAvatar)
+                else avatar.setImageResource(R.drawable.person_empty)
+                //like.isChecked = post.likedByMe
+                //like.text = "${post.likes}"
 
-            menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
+                menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
 
-            menu.setOnClickListener {
-                PopupMenu(it.context, it).apply {
-                    inflate(R.menu.options_post)
-                    // TODO: if we don't have other options, just remove dots
-                    menu.setGroupVisible(R.id.owned, post.ownedByMe)
-                    setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.remove -> {
-                                onInteractionListener.onRemove(post)
-                                true
+                menu.setOnClickListener {
+                    PopupMenu(it.context, it).apply {
+                        inflate(R.menu.options_post)
+                        // TODO: if we don't have other options, just remove dots
+                        menu.setGroupVisible(R.id.owned, post.ownedByMe)
+                        setOnMenuItemClickListener { item ->
+                            when (item.itemId) {
+                                R.id.remove -> {
+                                    onInteractionListener.onRemove(post)
+                                    true
+                                }
+                                R.id.edit -> {
+
+                                    onInteractionListener.onEdit(post)
+                                    true
+                                }
+
+                                else -> false
                             }
-                            R.id.edit -> {
-                                onInteractionListener.onEdit(post)
-                                true
-                            }
-
-                            else -> false
                         }
-                    }
-                }.show()
-            }
+                    }.show()
+                }
 
-            like.setOnClickListener {
-                onInteractionListener.onLike(post)
-            }
+                like.setOnClickListener {
+                    onInteractionListener.onLike(post)
+                }
 
-            share.setOnClickListener {
-                onInteractionListener.onShare(post)
+                share.setOnClickListener {
+                    onInteractionListener.onShare(post)
+                }
             }
         }
     }
-}
 
-class DateSeparatorViewHolder(
-    private val binding: SeparatorDateItemBinding,
-    private val onInteractionListener: OnInteractionListener,
-) : RecyclerView.ViewHolder(binding.root) {
-    //заполняем разделитель
-    fun bind(dateSeparator: DateSeparator) {
-        binding.apply {
+    class DateSeparatorViewHolder(
+        private val binding: SeparatorDateItemBinding,
+        private val onInteractionListener: OnInteractionListener,
+    ) : RecyclerView.ViewHolder(binding.root) {
+        //заполняем разделитель
+        fun bind(dateSeparator: DateSeparator) {
+            binding.apply {
                 //в зависимости от ID будем присваивать значение текста
-                 val textId = when (dateSeparator.id) {
+                val textId = when (dateSeparator.id) {
                     TimesAgo.TODAY.time -> TimesAgo.TODAY.title
                     TimesAgo.YESTERDAY.time -> TimesAgo.YESTERDAY.title
                     TimesAgo.LAST_WEEK.time -> TimesAgo.LAST_WEEK.title
                     else -> TimesAgo.LONG_AGO.title
-                 }
-                 separatorDescription.setText(textId)
+                }
+                separatorDescription.setText(textId)
             }
         }
     }
 
-class HeaderViewHolder(
-    private val binding: HeaderBinding,
-) : RecyclerView.ViewHolder(binding.root) {
+    class HeaderViewHolder(
+        private val binding: HeaderBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-    //заполняем Header в зависимости от даты самого свежего поста
-    fun bind(header: Header) {
-        binding.apply {
-            TODO()
+        //заполняем Header в зависимости от даты самого свежего поста
+        fun bind(header: Header) {
+            binding.apply {
+                TODO()
             }
 
         }
     }
 
 
+    class FeedItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
+        override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
+            //проверяем ситуацию, когда у поста и разделителя может быть одинаковый id
+            if (oldItem::class != newItem::class) {
+                return false
+            }
 
-
-
-
-
-class FeedItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
-    override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
-        //проверяем ситуацию, когда у поста и разделителя может быть одинаковый id
-        if (oldItem::class != newItem::class) {
-            return false
+            return oldItem.id == newItem.id
         }
 
-        return oldItem.id == newItem.id
-    }
+        override fun areContentsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
 
-    override fun areContentsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
-
-        return oldItem == newItem
+            return oldItem == newItem
+        }
     }
 }

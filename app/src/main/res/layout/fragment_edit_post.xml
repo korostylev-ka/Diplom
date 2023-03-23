@@ -21,12 +21,30 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/edit"
+                android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/common_spacing" />
+            <ImageView
+                android:id="@+id/attachment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/common_spacing"
+                android:contentDescription="@string/description_post_attachment"
+                app:layout_constraintTop_toBottomOf="@id/content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/video"/>
+            <VideoView
+                android:id="@+id/video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/common_spacing"
+                android:contentDescription="@string/description_post_video"
+                app:layout_constraintTop_toBottomOf="@id/attachment"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/footer"/>
 
             <FrameLayout
                 android:id="@+id/photoContainer"

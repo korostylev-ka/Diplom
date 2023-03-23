@@ -1,16 +1,11 @@
 package ru.netology.nework.viewmodel
 
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import ru.netology.nework.api.ApiService
-import ru.netology.nework.application.NMediaApplication
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.auth.AuthState
 import ru.netology.nework.dto.User
@@ -18,7 +13,6 @@ import ru.netology.nework.dto.Users
 import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.NetworkError
 import ru.netology.nework.error.UnknownError
-import ru.netology.nework.ui.AuthFragment
 import java.io.IOException
 import javax.inject.Inject
 

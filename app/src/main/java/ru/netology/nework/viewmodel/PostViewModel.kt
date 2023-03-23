@@ -3,11 +3,10 @@ package ru.netology.nework.viewmodel
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.lifecycle.*
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
+import androidx.paging.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
@@ -17,6 +16,7 @@ import ru.netology.nework.dto.Post
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.PhotoModel
 import ru.netology.nework.repository.PostRepository
+import ru.netology.nework.ui.EditPostFragment
 import ru.netology.nework.util.SingleLiveEvent
 import javax.inject.Inject
 
@@ -64,6 +64,21 @@ class PostViewModel @Inject constructor(
                     }
                 }
         }
+
+    //запрос поста по id
+    /*suspend fun getPost(id: Long): Post{
+        println("Запрос из ViewModel")
+        val post = repository.getPostById(id)
+        return post
+    }*/
+
+
+    suspend fun getPost(id: Long): Post = viewModelScope.async {
+        //EditPostFragment.getPost(repository.getPostById(id))
+        repository.getPostById(id)
+
+    }.await()
+
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -123,6 +138,21 @@ class PostViewModel @Inject constructor(
 
     fun edit(post: Post) {
         edited.value = post
+        edited.value?.let {
+            viewModelScope.launch {
+                try {
+                    repository.save(
+                        it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
+                    )
+
+                    _postCreated.value = Unit
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        edited.value = empty
+        _photo.value = noPhoto
     }
 
     fun changeContent(content: String) {

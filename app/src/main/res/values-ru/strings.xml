@@ -49,5 +49,7 @@
     <string name="error">Что-то пошло не так. Попробуйте позже</string>
     <string name="registration_success">Успешная регистрация</string>
     <string name="min_length">Минимальное количество символов: 1</string>
+    <string name="editing_post">Редактирование поста</string>
+    <string name="new_post">Новый пост</string>
 
 </resources>
