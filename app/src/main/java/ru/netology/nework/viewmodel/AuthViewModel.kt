@@ -80,26 +80,7 @@ class AuthViewModel @Inject constructor(private val auth: AppAuth, private val a
         return null
     }
 
-    suspend fun registrate(user: User) {
-        println(data.value)
-        /*if (data.value == AuthState()) {
-            try {
 
-                val response =
-                    apiService.registrate(user.login, user.password, user.name, user.file)
-                if (!response.isSuccessful) {
-                    throw ApiError(response.code(), response.message())
-                }
-
-                val body = response.body() ?: throw ApiError(response.code(), response.message())
-
-                throw NetworkError
-            } catch (e: Exception) {
-                throw UnknownError
-            }
-
-        }*/
-    }
 
     //получаем данные зарегистрированного пользователя
     suspend fun getUser(): Users {

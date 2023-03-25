@@ -156,6 +156,26 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun like(id: Long, isLiked: Boolean) {
+        try {
+            val response = when (isLiked) {
+                false -> apiService.likeById(id)
+                else -> apiService.dislikeById(id)
+            }
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.insert(PostEntity.fromDto(body))
+
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+
+    }
+
     override suspend fun upload(upload: MediaUpload): Media {
         try {
             val media = MultipartBody.Part.createFormData(

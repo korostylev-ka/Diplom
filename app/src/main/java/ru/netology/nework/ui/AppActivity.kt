@@ -1,5 +1,6 @@
 package ru.netology.nework.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -9,8 +10,10 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -18,7 +21,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.dto.User
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.ui.NewPostFragment.Companion.textArg
 import ru.netology.nework.viewmodel.AuthViewModel
@@ -32,6 +34,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
     @Inject
     lateinit var auth: AppAuth
     private val viewModel: AuthViewModel by viewModels()
+
 
 
 
@@ -66,6 +69,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                 if (viewModel.authenticated) {
                     val user = viewModel.getUser()
                     setTitle(user.name)
+
                 } else setTitle(R.string.not_autorized)
             }
         }

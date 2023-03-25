@@ -32,7 +32,7 @@ private val empty = Post(
     authorAvatar = null,
     authorJob = null,
     coords = null,
-    likeOwnerIds = emptyList(),
+    likeOwnerIds = ArrayList(),
     link = null,
     mentionIds = emptyList(),
     //users = null,
@@ -170,6 +170,14 @@ class PostViewModel @Inject constructor(
     fun likeById(id: Long, isLiked: Boolean) = viewModelScope.launch {
         try {
             repository.likeById(id, isLiked)
+        } catch (e: Exception) {
+            _dataState.value = FeedModelState(error = true)
+        }
+    }
+
+    fun like(id: Long, isLiked: Boolean) = viewModelScope.launch {
+        try {
+            repository.like(id, isLiked)
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)
         }

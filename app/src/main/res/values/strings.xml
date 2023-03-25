@@ -50,8 +50,7 @@
     <string name="min_length">Min lenght: 1</string>
     <string name="editing_post">Post editing</string>
     <string name="new_post">New post</string>
-
-
+    <string name="user_links">User links</string>
 
 
 </resources>

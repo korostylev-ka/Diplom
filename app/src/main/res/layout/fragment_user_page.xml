@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:visibility="visible"
+    android:background="@color/colorAccent"
+    tools:context=".ui.UserPageFragment">
+
+
+    <ImageView
+        android:id="@+id/userAvatar"
+        android:layout_width="@dimen/posts_avatar_size"
+        android:layout_height="@dimen/posts_avatar_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </ImageView>
+    <TextView
+        android:id="@+id/userId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_spacing"
+        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="EMPTY">
+    </TextView>
+    <Button
+        android:layout_marginStart="@dimen/common_spacing"
+        android:id="@+id/post_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintTop_toBottomOf="@id/userId"
+        android:text="POSTS">
+    </Button>
+    <Button
+        android:layout_marginStart="@dimen/common_spacing"
+        android:id="@+id/event_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/post_button"
+        app:layout_constraintTop_toBottomOf="@id/userId"
+        android:text="EVENTS">
+    </Button>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

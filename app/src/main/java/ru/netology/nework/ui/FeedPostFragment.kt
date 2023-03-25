@@ -7,40 +7,52 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import ru.netology.nework.R
 import ru.netology.nework.adapter.OnInteractionListener
 import ru.netology.nework.adapter.PagingLoadStateAdapter
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.databinding.FragmentFeedBinding
+import ru.netology.nework.databinding.FragmentFeedPostBinding
+
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
-import ru.netology.nework.ui.AuthFragment.Companion.textArg
-import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
+import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FeedFragment : Fragment() {
+class FeedPostFragment : Fragment() {
     @Inject
     lateinit var repository: PostRepository
 
     @Inject
     lateinit var auth: AppAuth
     private val viewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentFeedBinding.inflate(inflater, container, false)
+        val binding = FragmentFeedPostBinding.inflate(inflater, container, false)
+
+
+        //В зависимости от того, зарегистрированы или нет, показываем панель данных пользователя
+        authViewModel.data.observe(viewLifecycleOwner) {
+            lifecycleScope.launchWhenCreated {
+                //если авторизованы, запрашиваем данные пользователя
+                if (authViewModel.authenticated) {
+                    binding.userBar.visibility = View.VISIBLE
+                } else binding.userBar.visibility = View.GONE
+            }
+        }
 
         val adapter = PostsAdapter(object : OnInteractionListener {
             //редактирование поста
@@ -53,7 +65,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id, post.likedByMe)
+                viewModel.like(post.id, post.likedByMe)
             }
 
             override fun onRemove(post: Post) {
@@ -72,6 +84,7 @@ class FeedFragment : Fragment() {
                 startActivity(shareIntent)
             }
         })
+
 
         binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
             header = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
@@ -99,12 +112,12 @@ class FeedFragment : Fragment() {
             }
         }
 
-
         binding.swiperefresh.setOnRefreshListener(adapter::refresh)
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
+
 
         return binding.root
     }

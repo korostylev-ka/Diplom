@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nework.BuildConfig
 import ru.netology.nework.R
+import ru.netology.nework.databinding.CardEventBinding
 import ru.netology.nework.databinding.CardPostBinding
 import ru.netology.nework.databinding.HeaderBinding
 import ru.netology.nework.databinding.SeparatorDateItemBinding
@@ -27,30 +28,19 @@ import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 
-interface OnInteractionListener {
-    fun onLike(post: Post) {}
-    fun onEdit(post: Post) {}
-    fun onRemove(post: Post) {}
-    fun onShare(post: Post) {}
-}
-private val typeSepararor = 0
-private val typePost = 1
-private val typeHeader = 2
+private val typeEvent = 1
 
 private val mediaObserver = MediaLifecycleObserver()
 
-class PostsAdapter(
+class EventsAdapter(
     private val onInteractionListener: OnInteractionListener,
-    //меняем PostViewHolder на базовый RecyclerView.ViewHolder и Post на FeedItem
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(FeedItemDiffCallback()) {
     //получаем тип элемента
     override fun getItemViewType(position: Int): Int {
-        //вставляем первоначальный разделитель по дате последнего поста
-        //if (position == 0) return typeHeader
         return when (getItem(position)) {
             //если тип разделитель, то ссылка на макет с разделителем
             //is DateSeparator -> typeSepararor
-            is Post -> typePost
+            is Event -> typeEvent
             //is Header -> typeHeader
             else -> throw IllegalArgumentException("unknown item type")
         }
@@ -65,8 +55,8 @@ class PostsAdapter(
                 SeparatorDateItemBinding.inflate(layoutInflater, parent, false),
                 onInteractionListener
             )*/
-            typePost -> PostViewHolder(
-                CardPostBinding.inflate(layoutInflater, parent, false),
+            typeEvent -> PostViewHolder(
+                CardEventBinding.inflate(layoutInflater, parent, false),
                 onInteractionListener
             )
             /*typeHeader -> HeaderViewHolder(
@@ -91,7 +81,7 @@ class PostsAdapter(
     }
 
     class PostViewHolder(
-        private val binding: CardPostBinding,
+        private val binding: CardEventBinding,
         private val onInteractionListener: OnInteractionListener,
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -198,39 +188,6 @@ class PostsAdapter(
         }
     }
 
-    class DateSeparatorViewHolder(
-        private val binding: SeparatorDateItemBinding,
-        private val onInteractionListener: OnInteractionListener,
-    ) : RecyclerView.ViewHolder(binding.root) {
-        //заполняем разделитель
-        fun bind(dateSeparator: DateSeparator) {
-            binding.apply {
-                //в зависимости от ID будем присваивать значение текста
-                val textId = when (dateSeparator.id) {
-                    TimesAgo.TODAY.time -> TimesAgo.TODAY.title
-                    TimesAgo.YESTERDAY.time -> TimesAgo.YESTERDAY.title
-                    TimesAgo.LAST_WEEK.time -> TimesAgo.LAST_WEEK.title
-                    else -> TimesAgo.LONG_AGO.title
-                }
-                separatorDescription.setText(textId)
-            }
-        }
-    }
-
-    class HeaderViewHolder(
-        private val binding: HeaderBinding,
-    ) : RecyclerView.ViewHolder(binding.root) {
-
-        //заполняем Header в зависимости от даты самого свежего поста
-        fun bind(header: Header) {
-            binding.apply {
-                TODO()
-            }
-
-        }
-    }
-
-
     class FeedItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
         override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
             //проверяем ситуацию, когда у поста и разделителя может быть одинаковый id
@@ -247,3 +204,4 @@ class PostsAdapter(
         }
     }
 }
+

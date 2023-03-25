@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Вставка фрагмента данных по авторизованному пользователю -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/user_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <fragment
+            android:id="@+id/user_links"
+            android:tag="@string/user_links"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:name="ru.netology.nework.ui.UserPageFragment"
+            tools:layout="@layout/fragment_user_page"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </fragment>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <TextView
             android:id="@+id/emptyText"
             android:layout_width="wrap_content"
@@ -42,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/card_post" />
+                tools:listitem="@layout/card_event" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -57,5 +77,5 @@
         android:focusable="true"
         android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_add_24dp" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
 

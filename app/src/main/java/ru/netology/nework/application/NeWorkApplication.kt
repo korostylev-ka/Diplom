@@ -17,13 +17,6 @@ class NeWorkApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        //auth = AppAuth(this)
-        setupAuth()
-    }
-
-    private fun setupAuth() {
-        appScope.launch {
-            auth.sendPushToken()
-        }
+        auth = AppAuth(this)
     }
 }

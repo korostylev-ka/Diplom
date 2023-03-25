@@ -51,5 +51,6 @@
     <string name="min_length">Минимальное количество символов: 1</string>
     <string name="editing_post">Редактирование поста</string>
     <string name="new_post">Новый пост</string>
+    <string name="user_links">Ссылки пользователя</string>
 
 </resources>

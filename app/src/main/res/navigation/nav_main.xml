@@ -5,11 +5,13 @@
     android:id="@+id/nav_main"
     app:startDestination="@id/feedFragment">
 
+
     <fragment
         android:id="@+id/feedFragment"
-        android:name="ru.netology.nework.ui.FeedFragment"
+        android:name="ru.netology.nework.ui.FeedPostFragment"
         android:label="fragment_feed"
-        tools:layout="@layout/fragment_feed">
+        tools:layout="@layout/fragment_feed_post">
+
         <!-- Переход на страницу создания поста-->
         <action
             android:id="@+id/action_feedFragment_to_newPostFragment"
@@ -38,6 +40,14 @@
         <action
             android:id="@+id/action_feedFragment_to_editPostFragment"
             app:destination="@id/editPostFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <!-- Переход на страницу событий-->
+        <action
+            android:id="@+id/action_feedFragment_to_feedEventFragment"
+            app:destination="@id/feedEventFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
@@ -100,5 +110,27 @@
         android:name="ru.netology.nework.ui.EditPostFragment"
         android:label="fragment_new_post"
         tools:layout="@layout/fragment_new_post" />
+
+    <fragment
+        android:id="@+id/userPageFragment"
+        android:name="ru.netology.nework.ui.UserPageFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_user_page">
+    </fragment>
+
+    <fragment
+        android:id="@+id/feedEventFragment"
+        android:name="ru.netology.nework.ui.FeedEventFragment"
+        android:label="fragment_feed_event"
+        tools:layout="@layout/fragment_user_page">
+        <!-- Переход на страницу постов-->
+        <action
+            android:id="@+id/action_feedEventFragment_to_feedFragment"
+            app:destination="@id/feedFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
 
 </navigation>

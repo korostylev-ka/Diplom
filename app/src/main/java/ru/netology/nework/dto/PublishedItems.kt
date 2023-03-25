@@ -1,6 +1,8 @@
 package ru.netology.nework.dto
 
 import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.enumeration.EventType
+
 //объединяем объекты  общим классом
 sealed class FeedItem{
     abstract val id: Long
@@ -26,11 +28,34 @@ data class Post(
     val published: String,
     val coords: Coordinates?,
     val link: String?,
-    val likeOwnerIds: List<Long> = emptyList(),
+    val likeOwnerIds: MutableList<Long> = ArrayList(),
     val mentionIds: List<Long> = emptyList(),
     val mentionedMe: Boolean,
     val likedByMe: Boolean,
     val attachment: Attachment? = null,
+    val ownedByMe: Boolean = false,
+    //val users: List<Users>? = null
+): FeedItem()
+
+//события
+data class Event(
+    override val id: Long,
+    val authorId: Long,
+    val author: String,
+    val authorAvatar: String?,
+    val authorJob: String?,
+    val content: String,
+    val dateTime: String,
+    val published: String,
+    val coords: Coordinates?,
+    val type: Type,
+    val likeOwnerIds: MutableList<Long> = ArrayList(),
+    val likedByMe: Boolean,
+    val speakerIds: List<Long> = emptyList(),
+    val patrisipantsIds: List<Long> = emptyList(),
+    val participatedByMe: Boolean,
+    val attachment: Attachment? = null,
+    val link: String?,
     val ownedByMe: Boolean = false,
     //val users: List<Users>? = null
 ): FeedItem()
@@ -43,4 +68,9 @@ data class Attachment(
 data class Coordinates(
     val lat: String,
     val long: String,
+)
+
+data class Type(
+    val url: String,
+    val type: EventType,
 )
