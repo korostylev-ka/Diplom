@@ -28,12 +28,20 @@ import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 
+interface OnInteractionListenerEvent {
+    fun onLike(event: Event) {}
+    fun onEdit(event: Event) {}
+    fun onRemove(event: Event) {}
+    fun onShare(event: Event) {}
+}
+
 private val typeEvent = 1
+
 
 private val mediaObserver = MediaLifecycleObserver()
 
 class EventsAdapter(
-    private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: OnInteractionListenerEvent,
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(FeedItemDiffCallback()) {
     //получаем тип элемента
     override fun getItemViewType(position: Int): Int {
@@ -46,23 +54,13 @@ class EventsAdapter(
         }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            //если разделитель по дате поста, создадим его viewHolder
-            /*typeSepararor -> DateSeparatorViewHolder(
-                SeparatorDateItemBinding.inflate(layoutInflater, parent, false),
-                onInteractionListener
-            )*/
-            typeEvent -> PostViewHolder(
+            typeEvent -> EventViewHolder(
                 CardEventBinding.inflate(layoutInflater, parent, false),
                 onInteractionListener
             )
-            /*typeHeader -> HeaderViewHolder(
-                HeaderBinding.inflate(layoutInflater, parent, false),
-
-            )*/
             else -> throw IllegalArgumentException("unknown view type: $viewType")
         }
     }
@@ -70,39 +68,36 @@ class EventsAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         getItem(position)?.let {
             when (it) {
-                //если пост, приводим к view
-                // Holder'a поста
-                is Post -> (holder as? PostViewHolder)?.bind(it)
-                //is DateSeparator -> (holder as? DateSeparatorViewHolder)?.bind(it)
-                //is Header -> (holder as? HeaderViewHolder)?.bind(it)
+                // Holder'a событий
+                is Event -> (holder as? EventViewHolder)?.bind(it)
                 else -> throw IllegalArgumentException("unknown item type")
             }
         }
     }
 
-    class PostViewHolder(
+    class EventViewHolder(
         private val binding: CardEventBinding,
-        private val onInteractionListener: OnInteractionListener,
+        private val onInteractionListener: OnInteractionListenerEvent,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(post: Post) {
+        fun bind(event: Event) {
             binding.apply {
 
-                author.text = post.author
-                published.text = post.published
-                content.text = post.content
-                like.text = post.likeOwnerIds.size.toString()
+                author.text = event.author
+                published.text = event.published
+                content.text = event.content
+                like.text = event.likeOwnerIds.size.toString()
                 //если вложений нет, view невидима и не занимает места
-                if (post.attachment == null) {
+                if (event.attachment == null) {
                     attachment.isVisible = false
                     //если есть вложение
                 } else {
-                    when (post.attachment.type) {
+                    when (event.attachment.type) {
                         //если вложение - изображение
                         AttachmentType.IMAGE -> {
                             attachment.isVisible = true
                             Glide.with(binding.attachment)
-                                .load(post.attachment.url)
+                                .load(event.attachment.url)
                                 .timeout(10_000)
                                 .into(binding.attachment)
                         }
@@ -113,7 +108,7 @@ class EventsAdapter(
                             attachment.setOnClickListener {
                                 mediaObserver.apply {
                                     player?.setDataSource(
-                                        post.attachment.url
+                                        event.attachment.url
                                     )
                                 }.play()
                             }
@@ -122,7 +117,7 @@ class EventsAdapter(
                             video.apply {
                                 setMediaController(MediaController(context))
                                 setVideoURI(
-                                    Uri.parse(post.attachment.url)
+                                    Uri.parse(event.attachment.url)
                                 )
                                 setOnPreparedListener {
                                     start()
@@ -147,27 +142,26 @@ class EventsAdapter(
 
 
                 }
-                if (post.authorAvatar != null) avatar.loadCircleCrop(post.authorAvatar)
+                if (event.authorAvatar != null) avatar.loadCircleCrop(event.authorAvatar)
                 else avatar.setImageResource(R.drawable.person_empty)
-                like.isChecked = post.likedByMe
+                like.isChecked = event.likedByMe
                 //like.text = "${post.likes}"
 
-                menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
+                menu.visibility = if (event.ownedByMe) View.VISIBLE else View.INVISIBLE
 
                 menu.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.options_post)
                         // TODO: if we don't have other options, just remove dots
-                        menu.setGroupVisible(R.id.owned, post.ownedByMe)
+                        menu.setGroupVisible(R.id.owned, event.ownedByMe)
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
                                 R.id.remove -> {
-                                    onInteractionListener.onRemove(post)
+                                    onInteractionListener.onRemove(event)
                                     true
                                 }
                                 R.id.edit -> {
-
-                                    onInteractionListener.onEdit(post)
+                                    onInteractionListener.onEdit(event)
                                     true
                                 }
 
@@ -178,11 +172,11 @@ class EventsAdapter(
                 }
 
                 like.setOnClickListener {
-                    onInteractionListener.onLike(post)
+                    onInteractionListener.onLike(event)
                 }
 
                 share.setOnClickListener {
-                    onInteractionListener.onShare(post)
+                    onInteractionListener.onShare(event)
                 }
             }
         }

@@ -27,7 +27,7 @@ import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 
-interface OnInteractionListener {
+interface OnInteractionListenerPost {
     fun onLike(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
@@ -40,7 +40,7 @@ private val typeHeader = 2
 private val mediaObserver = MediaLifecycleObserver()
 
 class PostsAdapter(
-    private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: OnInteractionListenerPost,
     //меняем PostViewHolder на базовый RecyclerView.ViewHolder и Post на FeedItem
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(FeedItemDiffCallback()) {
     //получаем тип элемента
@@ -92,7 +92,7 @@ class PostsAdapter(
 
     class PostViewHolder(
         private val binding: CardPostBinding,
-        private val onInteractionListener: OnInteractionListener,
+        private val onInteractionListener: OnInteractionListenerPost,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(post: Post) {
@@ -200,7 +200,7 @@ class PostsAdapter(
 
     class DateSeparatorViewHolder(
         private val binding: SeparatorDateItemBinding,
-        private val onInteractionListener: OnInteractionListener,
+        private val onInteractionListener: OnInteractionListenerPost,
     ) : RecyclerView.ViewHolder(binding.root) {
         //заполняем разделитель
         fun bind(dateSeparator: DateSeparator) {
