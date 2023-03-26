@@ -6,14 +6,13 @@ import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.enumeration.EventType
 
 data class TypeEmbeddable(
-    var url: String,
     var type: EventType,
 ) {
-    fun toDto() = Type(url, type)
+    fun toDto() = type
 
     companion object {
-        fun fromDto(dto: Type?) = dto?.let {
-            TypeEmbeddable(it.url, it.type)
+        fun fromDto(dto: EventType) = dto.let {
+            TypeEmbeddable(it)
         }
     }
 }

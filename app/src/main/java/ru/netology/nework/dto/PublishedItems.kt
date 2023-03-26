@@ -45,15 +45,15 @@ data class Event(
     val authorAvatar: String?,
     val authorJob: String?,
     val content: String,
-    val dateTime: String,
+    val datetime: String,
     val published: String,
-    val coords: Coordinates?,
-    val type: Type?,
+    val coords: Coordinates? = null,
+    val type: EventType,
     val likeOwnerIds: MutableList<Long> = ArrayList(),
-    val likedByMe: Boolean,
-    val speakerIds: List<Long> = emptyList(),
-    val partisipantsIds: List<Long> = emptyList(),
-    val participatedByMe: Boolean,
+    val likedByMe: Boolean = false,
+    val speakerIds: MutableList<Long> = ArrayList(),
+    val participantsIds: MutableList<Long> = ArrayList(),
+    val participatedByMe: Boolean = false,
     val attachment: Attachment? = null,
     val link: String?,
     val ownedByMe: Boolean = false,
@@ -71,6 +71,5 @@ data class Coordinates(
 )
 
 data class Type(
-    val url: String,
     val type: EventType,
 )

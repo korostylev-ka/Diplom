@@ -14,14 +14,14 @@ import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
-import ru.netology.nework.adapter.OnInteractionListenerPost
-import ru.netology.nework.adapter.PagingLoadStateAdapter
-import ru.netology.nework.adapter.PostsAdapter
+import ru.netology.nework.adapter.*
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentFeedEventBinding
+import ru.netology.nework.dto.Event
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.viewmodel.AuthViewModel
+import ru.netology.nework.viewmodel.EventViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
@@ -32,7 +32,7 @@ class FeedEventFragment : Fragment() {
 
     @Inject
     lateinit var auth: AppAuth
-    private val viewModel: PostViewModel by activityViewModels()
+    private val viewModel: EventViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
@@ -53,28 +53,28 @@ class FeedEventFragment : Fragment() {
             }
         }
 
-        val adapter = PostsAdapter(object : OnInteractionListenerPost {
+        val adapter = EventsAdapter(object : OnInteractionListenerEvent {
             //редактирование поста
-            override fun onEdit(post: Post) {
+            override fun onEdit(event: Event) {
                 val bundle = Bundle()
-                bundle.putLong("id", post.id)
+                bundle.putLong("id", event.id)
                 //переходим на страницу редактирования, передавая в поле логин значение id поста
-                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, EditPostFragment.createArguments(post.id)
-                )
+                //findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, EditPostFragment.createArguments(post.id)
+
             }
 
-            override fun onLike(post: Post) {
-                viewModel.like(post.id, post.likedByMe)
+            override fun onLike(event: Event) {
+                viewModel.like(event.id, event.likedByMe)
             }
 
-            override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
+            override fun onRemove(event: Event) {
+                viewModel.removeById(event.id)
             }
 
-            override fun onShare(post: Post) {
+            override fun onShare(event: Event) {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    putExtra(Intent.EXTRA_TEXT, event.content)
                     type = "text/plain"
                 }
 

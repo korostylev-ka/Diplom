@@ -13,20 +13,20 @@ data class EventEntity(
     val authorAvatar: String?,
     val authorJob: String?,
     val content: String,
-    val dateTime: String,
+    val datetime: String,
     val published: String,
     val likeOwnerIds: MutableList<Long>,
     val likedByMe: Boolean,
-    val speakerIds: List<Long>,
-    val partisipantsIds: List<Long> = emptyList(),
+    val speakerIds: MutableList<Long>,
+    val participantsIds: MutableList<Long>,
     val participatedByMe: Boolean,
     val link: String?,
     val ownedByMe: Boolean,
 
     @Embedded
-    var type: TypeEmbeddable?,
-    @Embedded(prefix = "event_")
-    var attachment: AttachmentEmbeddable?,
+    var type: TypeEmbeddable,
+    //@Embedded(prefix = "event_")
+    //var attachment: AttachmentEmbeddable?,
 ) {
     fun toDto() = Event(
         id,
@@ -35,16 +35,17 @@ data class EventEntity(
         authorAvatar,
         authorJob,
         content,
-        dateTime,
+        datetime,
         published,
         coords = null,
-        type?.toDto(),
+        type.toDto(),
         likeOwnerIds,
         likedByMe,
-        speakerIds = emptyList(),
-        partisipantsIds = emptyList(),
+        speakerIds = ArrayList(),
+        participantsIds = ArrayList(),
         participatedByMe,
-        attachment?.toDto(),
+        attachment = null,
+        //attachment?.toDto(),
         link,
         ownedByMe,
 
@@ -59,17 +60,18 @@ data class EventEntity(
                 dto.authorAvatar,
                 dto.authorJob,
                 dto.content,
-                dto.dateTime,
+                dto.datetime,
                 dto.published,
                 dto.likeOwnerIds,
                 dto.likedByMe,
                 dto.speakerIds,
-                dto.partisipantsIds,
+                dto.participantsIds,
                 dto.participatedByMe,
                 dto.link,
                 dto.ownedByMe,
                 TypeEmbeddable.fromDto(dto.type),
-                AttachmentEmbeddable.fromDto(dto.attachment),
+
+                //AttachmentEmbeddable.fromDto(dto.attachment),
             )
     }
 }

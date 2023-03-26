@@ -70,12 +70,9 @@ interface ApiService {
     @DELETE("posts/{id}/likes")
     suspend fun dislikeById(@Path("id") id: Long): Response<Post>
 
-
-
     @Multipart
     @POST("media")
     suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
-
 
     @FormUrlEncoded
     @POST("users/registration/")
@@ -88,4 +85,40 @@ interface ApiService {
     @FormUrlEncoded
     @POST("users/authentication")
     suspend fun getAuthentication(@Field("login") login: String, @Field("password") password: String): Response<Token>
+
+    //Для запросов Событий(Events)
+    @GET("events/latest")
+    suspend fun getLatestEvents(@Query("count") count: Int): Response<List<Event>>
+
+    //получаем события новее, чем переданный id
+    @GET("events/{id}/after")
+    suspend fun getAfterEvents(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Event>>
+
+    @GET("events/{id}/before")
+    suspend fun getBeforeEvents(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Event>>
+
+    @GET("events/{id}")
+    suspend fun getEventById(@Path("id") id: Long): Response<Event>
+
+    @GET("posts/{id}/newer")
+    suspend fun getNewerEvent(@Path("id") id: Long): Response<List<Event>>
+
+    @POST("events")
+    suspend fun saveEvent(@Body event: Event): Response<Event>
+
+    @DELETE("events/{id}")
+    suspend fun removeEventById(@Path("id") id: Long): Response<Unit>
+
+    @POST("events/{id}/likes")
+    suspend fun likeEventById(@Path("id") id: Long): Response<Event>
+
+    @DELETE("events/{id}/likes")
+    suspend fun dislikeEventById(@Path("id") id: Long): Response<Event>
+
 }

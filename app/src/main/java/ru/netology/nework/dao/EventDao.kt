@@ -21,4 +21,13 @@ interface EventDao {
     @Query("SELECT * FROM EventEntity WHERE id = :id")
     fun getPost(id: Long): EventEntity
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(event: EventEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(events: List<EventEntity>)
+
+    @Query("DELETE FROM PostEntity WHERE id = :id")
+    suspend fun removeById(id: Long)
+
 }
