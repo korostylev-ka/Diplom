@@ -100,6 +100,8 @@ class EventRepositoryImpl @Inject constructor(
                 //приводим к нужному AttacmentType
                 val type = when (extension) {
                     "jpg", "png" -> AttachmentType.IMAGE
+                    "mp3" -> AttachmentType.AUDIO
+                    "mp4", "avi", "mpeg" -> AttachmentType.VIDEO
                     else -> throw Exception()
                 }
                 // TODO: add support for other types
@@ -123,7 +125,7 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun removeById(id: Long) {
         try {
             eventDao.removeById(id)
-            val response = apiService.removeById(id)
+            val response = apiService.removeEventById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -163,6 +165,18 @@ class EventRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    //получение пользователя по id
+    override suspend fun getUserById(id: Long): Users {
+        try {
+            val response = apiService.getUserById(id)
             return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: IOException) {
             throw NetworkError

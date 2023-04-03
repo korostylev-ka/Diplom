@@ -65,9 +65,6 @@ class PostRepositoryImpl @Inject constructor(
             val response = apiService.getById(id)
             return response.body() ?: throw ApiError(response.code(), response.message())
             //return post
-
-
-
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -102,9 +99,10 @@ class PostRepositoryImpl @Inject constructor(
                 //приводим к нужному AttacmentType
                 val type = when (extension) {
                     "jpg", "png" -> AttachmentType.IMAGE
+                    "mp3" -> AttachmentType.AUDIO
+                    "mp4", "avi", "mpeg" -> AttachmentType.VIDEO
                     else -> throw Exception()
                 }
-                // TODO: add support for other types
                 post.copy(attachment = Attachment(it.url, type))
             }
             //если есть вложение, то сохраняем пост
@@ -140,7 +138,6 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun likeById(id: Long, isLiked: Boolean) {
         try {
-            //postDao.likeById(id)
             //ответ на вызов в зависимости от был ли уже лайк
             val response = when (isLiked) {
                 false -> apiService.likeById(id)
@@ -185,6 +182,17 @@ class PostRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+    //получение пользователя по id
+    override suspend fun getUserById(id: Long): Users {
+        try {
+            val response = apiService.getUserById(id)
             return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: IOException) {
             throw NetworkError

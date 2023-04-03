@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:weightSum="100"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/welcome_title"
         android:orientation="vertical"
-        android:layout_weight="30"
+        android:layout_weight="35"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
@@ -19,13 +19,56 @@
 
         </ImageView>
         <TextView
+            android:id="@+id/welcome"
             android:gravity="center"
             android:layout_marginVertical="@dimen/common_spacing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/title_size"
             android:text="@string/welcome"/>
+
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/common_spacing">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="@dimen/reg_avatar_size"
+            android:layout_height="@dimen/reg_avatar_size"
+            android:src="@drawable/person_empty"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pickPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_select_photo"
+            app:icon="@drawable/ic_gallery_48dp"
+            app:layout_constraintEnd_toStartOf="@id/takePhoto"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatar" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/takePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_take_photo"
+            app:icon="@drawable/ic_cam_48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            app:layout_constraintStart_toEndOf="@id/pickPhoto"
+            app:layout_constraintTop_toBottomOf="@id/avatar" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/registration"
@@ -82,19 +125,6 @@
             android:layout_height="wrap_content"
             android:text="@string/register"/>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/author"
-        android:layout_weight="40"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
-            android:gravity="center|bottom"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/author_by"/>
     </LinearLayout>
 
 </LinearLayout>

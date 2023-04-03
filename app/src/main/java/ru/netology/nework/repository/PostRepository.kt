@@ -2,10 +2,7 @@ package ru.netology.nework.repository
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import ru.netology.nework.dto.FeedItem
-import ru.netology.nework.dto.Media
-import ru.netology.nework.dto.MediaUpload
-import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.*
 
 interface PostRepository {
     val data: Flow<PagingData<FeedItem>>
@@ -18,4 +15,5 @@ interface PostRepository {
     suspend fun likeById(id: Long, isLiked: Boolean)
     suspend fun like(id: Long, isLiked: Boolean)
     suspend fun upload(upload: MediaUpload): Media
+    suspend fun getUserById(id: Long): Users
 }

@@ -80,13 +80,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/header"
                 tools:text="@sample/posts.json/data/content" />
+            <TextView
+                android:id="@+id/links"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:visibility="gone"
+                android:lineSpacingMultiplier="1.5"
+                android:paddingTop="@dimen/common_spacing"
+                android:paddingBottom="@dimen/common_spacing"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/status"
+                app:layout_constraintTop_toBottomOf="@id/content"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:checkable="true"
+                android:contentDescription="@string/description_post_like"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/links"
+                app:layout_constraintBottom_toTopOf="@id/attachment_maps"
+                app:icon="@drawable/ic_status"
+                tools:checkable="true"
+
+                style="@style/Widget.AppTheme.Status"
+                />
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/attachment_maps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="content" />
             <ImageView
                 android:id="@+id/attachment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/common_spacing"
                 android:contentDescription="@string/description_post_attachment"
-                app:layout_constraintTop_toBottomOf="@id/content"
+                app:layout_constraintTop_toBottomOf="@id/attachment_maps"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/video"/>
             <VideoView
@@ -118,8 +152,17 @@
                 app:icon="@drawable/ic_like_24dp"
                 tools:checked="@sample/posts.json/data/likedByMe"
                 tools:text="@sample/posts.json/data/likes"
-                style="@style/Widget.AppTheme.LikeCheckBox"
-                />
+                style="@style/Widget.AppTheme.LikeCheckBox"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="false"
+                android:contentDescription="@string/description_post_like"
+                app:layout_constraintStart_toEndOf="@id/like"
+                app:layout_constraintTop_toBottomOf="@id/footer"
+                app:icon="@drawable/ic_likes_line_24dp"
+                style="@style/Widget.AppTheme.LikesLine"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/share"
@@ -127,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/common_spacing"
                 android:contentDescription="@string/description_post_share"
-                app:layout_constraintStart_toEndOf="@+id/like"
+                app:layout_constraintStart_toEndOf="@+id/likes"
                 app:layout_constraintTop_toBottomOf="@id/footer"
                 app:icon="@drawable/ic_share_24dp"
                 style="@style/Widget.AppTheme.IconButton"

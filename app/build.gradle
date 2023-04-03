@@ -69,6 +69,7 @@ dependencies {
     def imagepicker_version = "2.1"
     def paging_version = "3.1.1"
     def play_services_base_version = "18.2.0"
+    def pickerVersion = "1.0.0"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "androidx.core:core-ktx:$core_version"
@@ -100,8 +101,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
     implementation "com.github.dhaval2404:imagepicker:$imagepicker_version"
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation 'com.yandex.android:maps.mobile:4.3.1-full'
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    implementation "com.github.FunkyMuse.MediaPicker:core:$pickerVersion"
+    implementation "com.github.FunkyMuse.MediaPicker:audiopicker:$pickerVersion"
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"

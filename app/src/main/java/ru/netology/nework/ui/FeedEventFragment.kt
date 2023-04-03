@@ -18,11 +18,9 @@ import ru.netology.nework.adapter.*
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentFeedEventBinding
 import ru.netology.nework.dto.Event
-import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.EventViewModel
-import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,7 +39,6 @@ class FeedEventFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedEventBinding.inflate(inflater, container, false)
-
 
         //В зависимости от того, зарегистрированы или нет, показываем панель данных пользователя
         authViewModel.data.observe(viewLifecycleOwner) {
@@ -82,6 +79,10 @@ class FeedEventFragment : Fragment() {
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
             }
+
+            override fun onOpenLikes(event: Event) {
+                findNavController().navigate(R.id.action_feedEventFragment_to_eventLikesFragment, EventLikesFragment.createArguments(event.id))
+            }
         })
 
 
@@ -114,7 +115,7 @@ class FeedEventFragment : Fragment() {
         binding.swiperefresh.setOnRefreshListener(adapter::refresh)
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            findNavController().navigate(R.id.action_feedEventFragment_to_newEventFragment)
         }
 
         return binding.root

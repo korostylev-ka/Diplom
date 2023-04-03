@@ -5,15 +5,16 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:visibility="visible"
-    android:background="@color/colorAccent"
-    tools:context=".ui.UserPageFragment">
+    android:background="@drawable/border"
 
+    tools:context=".ui.UserPageFragment">
 
     <ImageView
         android:id="@+id/userAvatar"
         android:layout_width="@dimen/posts_avatar_size"
         android:layout_height="@dimen/posts_avatar_size"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
     </ImageView>
     <TextView
@@ -30,6 +31,8 @@
         android:id="@+id/post_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toBottomOf="@id/userId"
         android:text="POSTS">

@@ -1,27 +1,50 @@
 package ru.netology.nework.viewmodel
 
+import android.net.Uri
+import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.auth.AuthState
+import ru.netology.nework.dto.MediaUpload
 import ru.netology.nework.dto.User
 import ru.netology.nework.dto.Users
 import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.NetworkError
 import ru.netology.nework.error.UnknownError
+import ru.netology.nework.model.PhotoModel
 import java.io.IOException
 import javax.inject.Inject
 
+private val noPhoto = PhotoModel(null)
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val auth: AppAuth, private val apiService: ApiService,) : ViewModel() {
     val data: LiveData<AuthState> = auth.authStateFlow
         .asLiveData(Dispatchers.Default)
     val authenticated: Boolean
         get() = auth.authStateFlow.value.id != 0L
+
+    //аватар
+    private val _photo = MutableLiveData(noPhoto)
+    val photo: LiveData<PhotoModel>
+        get() = _photo
+
+    fun changePhoto(uri: Uri?) {
+        _photo.value = PhotoModel(uri)
+    }
+
 
     //авторизация по логину и паролю. В ответ получаем код ответа
     suspend fun getAuthentication(user: String, password: String): Int {
@@ -52,11 +75,21 @@ class AuthViewModel @Inject constructor(private val auth: AppAuth, private val a
     suspend fun registrationCreate(login: String, password: String, name: String): Users? {
         //код ответа
         var code = 0
+        //ссылка на загруженное фото аватара
+        val avatarFile = _photo.value?.uri?.let { MediaUpload(it.toFile())}
+        val multipartImage: MultipartBody.Part? =
+            avatarFile?.file?.let {
+                MultipartBody.Part.createFormData("file", avatarFile.file.name,
+                    it.asRequestBody("image/*".toMediaTypeOrNull())
+                )
+            }
+
         try {
             //запрос на сервер регистрации
-            val response = apiService.registrationCreate(login, password, name, null)
-            code = response.code()
+            println("ЗАПРОС НА РЕГИСТРАЦИЮ")
+            val response = apiService.registrationCreate(login, password, name, multipartImage)
             //если пользователь существует (не 200 ответ)
+            code = response.code()
             if (code == 400) {
                 return Users(0,"", "", null)
             }
@@ -79,8 +112,6 @@ class AuthViewModel @Inject constructor(private val auth: AppAuth, private val a
         }
         return null
     }
-
-
 
     //получаем данные зарегистрированного пользователя
     suspend fun getUser(): Users {

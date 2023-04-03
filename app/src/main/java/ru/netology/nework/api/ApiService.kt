@@ -3,6 +3,7 @@ package ru.netology.nework.api
 import okhttp3.Interceptor
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -74,9 +75,9 @@ interface ApiService {
     @POST("media")
     suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
 
-    @FormUrlEncoded
+    @Multipart
     @POST("users/registration/")
-    suspend fun registrationCreate(@Field("login") login: String, @Field("password") pass: String, @Field("name") name: String, @Field("file") file: File?): Response<Token>
+    suspend fun registrationCreate(@Part("login") login: String, @Part("password") pass: String, @Part("name") name: String, @Part file: MultipartBody.Part?): Response<Token>
 
     @GET("users/{id}")
     suspend fun getUserById(@Path("id") id: Long): Response<Users>
@@ -120,5 +121,7 @@ interface ApiService {
 
     @DELETE("events/{id}/likes")
     suspend fun dislikeEventById(@Path("id") id: Long): Response<Event>
+
+
 
 }

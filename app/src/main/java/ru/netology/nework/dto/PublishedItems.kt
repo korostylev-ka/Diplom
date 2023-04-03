@@ -1,5 +1,6 @@
 package ru.netology.nework.dto
 
+import androidx.room.Embedded
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.enumeration.EventType
 
@@ -47,7 +48,7 @@ data class Event(
     val content: String,
     val datetime: String,
     val published: String,
-    val coords: Coordinates? = null,
+    val coords: Coordinates?,
     val type: EventType,
     val likeOwnerIds: MutableList<Long> = ArrayList(),
     val likedByMe: Boolean = false,
@@ -65,11 +66,9 @@ data class Attachment(
     val type: AttachmentType,
 )
 
+
 data class Coordinates(
     val lat: String,
     val long: String,
 )
 
-data class Type(
-    val type: EventType,
-)

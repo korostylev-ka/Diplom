@@ -2,6 +2,7 @@ package ru.netology.nework.viewmodel
 
 import android.net.Uri
 import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.lifecycle.*
 import androidx.paging.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,11 +14,20 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.MediaUpload
 import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.Users
+import ru.netology.nework.error.ApiError
+import ru.netology.nework.error.NetworkError
+import ru.netology.nework.error.UnknownError
+import ru.netology.nework.model.AudioModel
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.PhotoModel
+import ru.netology.nework.model.VideoModel
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.ui.EditPostFragment
 import ru.netology.nework.util.SingleLiveEvent
+import ru.netology.nework.util.UriPathHelper
+import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 private val empty = Post(
@@ -39,6 +49,8 @@ private val empty = Post(
 )
 
 private val noPhoto = PhotoModel(null)
+private val noAudio = AudioModel(null)
+private val noVideo = VideoModel(null)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -89,10 +101,18 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    //медиавложение
+    //медиавложение(изображение)
     private val _photo = MutableLiveData(noPhoto)
     val photo: LiveData<PhotoModel>
         get() = _photo
+    //медиавложение(аудио)
+    private val _audio = MutableLiveData(noAudio)
+    val audio: LiveData<AudioModel>
+        get() = _audio
+    //медиавложение(видео)
+    private val _video = MutableLiveData(noVideo)
+    val video: LiveData<VideoModel>
+        get() = _video
 
     init {
         loadPosts()
@@ -121,11 +141,17 @@ class PostViewModel @Inject constructor(
     fun save() {
         edited.value?.let {
             viewModelScope.launch {
+                //определяем тип вложения
+                val upload: Uri? = when {
+                    _audio.value?.uri != null -> _audio.value?.uri
+                    _video.value?.uri != null -> _video.value?.uri
+                    _photo.value?.uri != null -> _photo.value?.uri
+                    else -> null
+                }
                 try {
                     repository.save(
-                        it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
+                        it, upload?.let { MediaUpload(upload.toFile()) }
                     )
-
                     _postCreated.value = Unit
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -134,6 +160,10 @@ class PostViewModel @Inject constructor(
         }
         edited.value = empty
         _photo.value = noPhoto
+        _audio.value = noAudio
+        _video.value = noVideo
+
+
     }
 
     fun edit(post: Post) {
@@ -167,6 +197,14 @@ class PostViewModel @Inject constructor(
         _photo.value = PhotoModel(uri)
     }
 
+    fun changeAudio(uri: Uri?) {
+        _audio.value = AudioModel(uri)
+    }
+
+    fun changeVideo(uri: Uri?) {
+        _video.value = VideoModel(uri)
+    }
+
     fun likeById(id: Long, isLiked: Boolean) = viewModelScope.launch {
         try {
             repository.likeById(id, isLiked)
@@ -191,4 +229,25 @@ class PostViewModel @Inject constructor(
         }
 
     }
+    //список пользователей, поставивших лайк
+    suspend fun getLikedUsers(post: Post): List<Users> {
+        val list = post.likeOwnerIds
+        val listUsers: MutableList<Users> = ArrayList<Users>()
+        try {
+            for (id in list) {
+                val user = repository.getUserById(id)
+                listUsers.add(user)
+            }
+            return listUsers.toList()
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+
+
+
+
 }

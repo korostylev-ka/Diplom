@@ -5,13 +5,11 @@
     android:id="@+id/nav_main"
     app:startDestination="@id/feedFragment">
 
-
     <fragment
         android:id="@+id/feedFragment"
         android:name="ru.netology.nework.ui.FeedPostFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed_post">
-
         <!-- Переход на страницу создания поста-->
         <action
             android:id="@+id/action_feedFragment_to_newPostFragment"
@@ -48,6 +46,14 @@
         <action
             android:id="@+id/action_feedFragment_to_feedEventFragment"
             app:destination="@id/feedEventFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <!-- Переход на страницу лайков-->
+        <action
+            android:id="@+id/action_feedFragment_to_listLikesFragment"
+            app:destination="@id/postLikesFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
@@ -117,7 +123,7 @@
         android:label="fragment_feed"
         tools:layout="@layout/fragment_user_page">
     </fragment>
-
+    <!--Фрагмент событий-->
     <fragment
         android:id="@+id/feedEventFragment"
         android:name="ru.netology.nework.ui.FeedEventFragment"
@@ -131,6 +137,39 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <!-- Переход на страницу создания события-->
+        <action
+            android:id="@+id/action_feedEventFragment_to_newEventFragment"
+            app:destination="@id/newEventFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <!-- Переход на страницу лайков-->
+        <action
+            android:id="@+id/action_feedEventFragment_to_eventLikesFragment"
+            app:destination="@id/eventLikesFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
+    <fragment
+        android:id="@+id/newEventFragment"
+        android:name="ru.netology.nework.ui.NewEventFragment"
+        android:label="fragment_new_event"
+        tools:layout="@layout/fragment_new_event">
+    </fragment>
+    <!-- Фрагмент списка лайков -->
+    <fragment
+        android:id="@+id/postLikesFragment"
+        android:name="ru.netology.nework.ui.PostLikesFragment"
+        android:label="fragment_post_likes"
+        tools:layout="@layout/fragment_post_likes" />
+    <fragment
+        android:id="@+id/eventLikesFragment"
+        android:name="ru.netology.nework.ui.EventLikesFragment"
+        android:label="fragment_event_likes"
+        tools:layout="@layout/fragment_post_likes" />
 
 </navigation>

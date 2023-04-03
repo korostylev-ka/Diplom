@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionBarSize">48dp</item>
 
     </style>
 
@@ -24,6 +25,68 @@
         <item name="android:minWidth">@dimen/icon_button_min_size</item>
         <item name="android:minHeight">@dimen/icon_button_min_size</item>
     </style>
+
+    <!-- Стиль для иконки статуса события -->
+    <style name="Widget.AppTheme.Status" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/status_tint</item>
+        <item name="backgroundTint">#00000000</item>
+        <item name="android:textColor">@color/status_tint</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+    </style>
+
+    <style name="AuthorNameTextStyle" >
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/author_name</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="Widget.AppTheme.ItemButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">#3700B3</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="backgroundColor">#7A3F3B</item>
+        <item name="android:paddingStart">@dimen/icon_button_padding</item>
+        <item name="android:paddingEnd">@dimen/icon_button_padding</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+    </style>
+    <style name="Widget.AppTheme.FabCancel" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="iconTint">#3700B3</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="backgroundTint">#F44336</item>
+        <item name="backgroundColor">#7A3F3B</item>
+        <item name="android:paddingStart">@dimen/icon_button_padding</item>
+        <item name="android:paddingEnd">@dimen/icon_button_padding</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+    </style>
+    <style name="Widget.MaterialComponents.CompoundButton.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="enforceMaterialTheme">true</item>
+        <item name="useMaterialThemeColors">true</item>
+        <item name="android:minWidth">?attr/minTouchTargetSize</item>
+        <item name="android:minHeight">?attr/minTouchTargetSize</item>
+    </style>
+
+    <style name="Base.Widget.Material3.CompoundButton.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="thumbTint">@color/switch_tint</item>
+        <item name="trackTint">@color/m3_switch_track_tint</item>
+        <item name="trackTintMode">src_in</item>
+    </style>
+
+    <style name="Widget.Material3.CompoundButton.Switch" parent="Base.Widget.Material3.CompoundButton.Switch"/>
+
+    <style name="Widget.AppTheme.LikesLine" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/red</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+    </style>
+
 
 
 </resources>

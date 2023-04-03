@@ -3,10 +3,10 @@ package ru.netology.nework.entity
 import ru.netology.nework.dto.Coordinates
 
 data class CoordinatesEmbeddable(
-    val lat: String,
-    val long: String,
+    val latC: String,
+    val longC: String,
 ) {
-    fun toDto() = Coordinates(lat, long)
+    fun toDto() = Coordinates(latC, longC)
 
     companion object {
         fun fromDto(dto: Coordinates?) = dto?.let {

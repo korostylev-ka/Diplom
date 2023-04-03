@@ -48,9 +48,19 @@
     <string name="register">Зарегистрироваться</string>
     <string name="error">Что-то пошло не так. Попробуйте позже</string>
     <string name="registration_success">Успешная регистрация</string>
+    <string name="user_exists">Пользователь уже зарегистрирован!</string>
     <string name="min_length">Минимальное количество символов: 1</string>
     <string name="editing_post">Редактирование поста</string>
     <string name="new_post">Новый пост</string>
+    <string name="new_event">Новое событие</string>
     <string name="user_links">Ссылки пользователя</string>
+    <string name="description_pick_audio">Прикрепить аудио файл</string>
+    <string name="description_pick_video">Прикрепить видео</string>
+    <string name="description_remove_attachment">Удалить прикрепленный файл</string>
+    <string name="set_date_time">Установка даты/времени</string>
+    <string name="event_online">Онлайн</string>
+    <string name="event_offline">Оффлайн</string>
+    <string name="post">Пост</string>
+    <string name="liked_users">понравился следующим пользователям:</string>
 
 </resources>

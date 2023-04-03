@@ -37,12 +37,20 @@ class FeedPostFragment : Fragment() {
     private val viewModel: PostViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by viewModels()
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedPostBinding.inflate(inflater, container, false)
+
+
+
+
+
+
 
 
         //В зависимости от того, зарегистрированы или нет, показываем панель данных пользователя
@@ -54,6 +62,7 @@ class FeedPostFragment : Fragment() {
                 } else binding.userBar.visibility = View.GONE
             }
         }
+
 
         val adapter = PostsAdapter(object : OnInteractionListenerPost {
             //редактирование поста
@@ -84,7 +93,12 @@ class FeedPostFragment : Fragment() {
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
             }
+
+            override fun onOpenLikes(post: Post) {
+                findNavController().navigate(R.id.action_feedFragment_to_listLikesFragment, PostLikesFragment.createArguments(post.id))
+            }
         })
+
 
 
         binding.list.adapter = adapter.withLoadStateHeaderAndFooter(

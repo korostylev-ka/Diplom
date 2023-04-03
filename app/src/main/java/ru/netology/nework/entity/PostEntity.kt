@@ -7,6 +7,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.dto.Post
 
 @Entity
@@ -20,6 +21,9 @@ data class PostEntity(
     val authorJob: String?,
     val content: String,
     val published: String,
+    @Embedded
+    val coords: CoordinatesEmbeddable?,
+    //val coords: Coordinates?,
     val link: String?,
     val likeOwnerIds: MutableList<Long>,
     //val mentionIds: List<Long>?,
@@ -29,7 +33,7 @@ data class PostEntity(
     @Embedded
     var attachment: AttachmentEmbeddable?,
     //@Embedded
-    //val coords: CoordinatesEmbeddable?
+    //val coords: Coordinates?,
 ) {
     fun toDto() = Post(
         id,
@@ -39,7 +43,8 @@ data class PostEntity(
         authorJob,
         content,
         published,
-        coords = null,
+        coords?.toDto(),
+        //coords,
         link,
         likeOwnerIds,
         mentionIds = emptyList(),
@@ -59,12 +64,15 @@ data class PostEntity(
                 dto.authorJob,
                 dto.content,
                 dto.published,
+                //dto.coords,
+                CoordinatesEmbeddable.fromDto(dto.coords),
                 dto.link,
                 dto.likeOwnerIds,
                 //dto.mentionIds,
                 dto.mentionedMe,
                 dto.likedByMe,
                 AttachmentEmbeddable.fromDto(dto.attachment),
+
                 //CoordinatesEmbeddable.fromDto(dto.coords),
 
             )
@@ -86,4 +94,17 @@ class ListIdsConverter {
         return Gson().toJson(list)
     }
 }
+
+/*class CoordsConverter {
+    @TypeConverter
+    fun fromLong(value: String): Coordinates {
+        val coorsType = object: TypeToken<Coordinates>(){}.type
+        return Gson().fromJson(value, coorsType)
+    }
+    @TypeConverter
+    fun Coordinates(coords: Coordinates): String {
+        return Gson().toJson(coords.lat)
+    }
+
+}*/
 

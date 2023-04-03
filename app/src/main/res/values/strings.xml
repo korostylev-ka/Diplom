@@ -47,10 +47,24 @@
     <string name="register">Register</string>
     <string name="error">Something wrong. Try later</string>
     <string name="registration_success">Success registration</string>
+    <string name="user_exists">Same user already exists!</string>
     <string name="min_length">Min lenght: 1</string>
     <string name="editing_post">Post editing</string>
     <string name="new_post">New post</string>
+    <string name="new_event">New event</string>
     <string name="user_links">User links</string>
+    <string name="description_pick_audio">Pick audio file</string>
+    <string name="description_pick_video">Pick video</string>
+    <string name="description_remove_attachment">Remove attachment</string>
+    <string name="set_date_time">Set date/time</string>
+    <string name="event_online">Online</string>
+    <string name="event_offline">Offline</string>
+    <string name="post">Post</string>
+    <string name="liked_users">liked by next users:</string>
+
+
+
+
 
 
 </resources>

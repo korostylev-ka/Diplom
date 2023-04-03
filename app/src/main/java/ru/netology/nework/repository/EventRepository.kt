@@ -13,4 +13,5 @@ interface EventRepository {
     suspend fun removeById(id: Long)
     suspend fun like(id: Long, isLiked: Boolean)
     suspend fun upload(upload: MediaUpload): Media
+    suspend fun getUserById(id: Long): Users
 }

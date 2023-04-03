@@ -23,6 +23,7 @@ import ru.netology.nework.databinding.HeaderBinding
 import ru.netology.nework.databinding.SeparatorDateItemBinding
 import ru.netology.nework.dto.*
 import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.enumeration.EventType
 import ru.netology.nework.ui.AuthFragment.Companion.textArg
 import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.view.loadCircleCrop
@@ -33,6 +34,7 @@ interface OnInteractionListenerEvent {
     fun onEdit(event: Event) {}
     fun onRemove(event: Event) {}
     fun onShare(event: Event) {}
+    fun onOpenLikes(event: Event) {}
 }
 
 private val typeEvent = 1
@@ -86,7 +88,15 @@ class EventsAdapter(
                 author.text = event.author
                 published.text = event.published
                 content.text = event.content
-                like.text = event.likeOwnerIds.size.toString()
+                if (event.link != null) {
+                    links.isVisible = true
+                    links.text = event.link
+                }
+                if (event.type == EventType.ONLINE) {
+                    status.isChecked = true
+                    status.setText(R.string.event_online)
+                } else status.setText(R.string.event_offline)
+                likes.text = event.likeOwnerIds.size.toString()
                 //если вложений нет, view невидима и не занимает места
                 if (event.attachment == null) {
                     attachment.isVisible = false
@@ -177,6 +187,9 @@ class EventsAdapter(
 
                 share.setOnClickListener {
                     onInteractionListener.onShare(event)
+                }
+                likes.setOnClickListener {
+                    onInteractionListener.onOpenLikes(event)
                 }
             }
         }

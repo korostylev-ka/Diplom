@@ -6,4 +6,6 @@
     <color name="divider_color">#ccc</color>
     <color name="blue_logo">#3A0CF0</color>
     <color name="yellow_logo">#F4F680</color>
+    <color name="author_name">#0E2293</color>
+    <color name="red">#FFF44336</color>
 </resources>

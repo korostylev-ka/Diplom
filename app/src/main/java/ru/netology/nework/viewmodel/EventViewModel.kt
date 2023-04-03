@@ -12,12 +12,17 @@ import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.enumeration.EventType
+import ru.netology.nework.error.NetworkError
+import ru.netology.nework.error.UnknownError
+import ru.netology.nework.model.AudioModel
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.PhotoModel
+import ru.netology.nework.model.VideoModel
 import ru.netology.nework.repository.EventRepository
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.ui.EditPostFragment
 import ru.netology.nework.util.SingleLiveEvent
+import java.io.IOException
 import javax.inject.Inject
 
 private val empty = Event(
@@ -42,6 +47,8 @@ private val empty = Event(
 )
 
 private val noPhoto = PhotoModel(null)
+private val noAudio = AudioModel(null)
+private val noVideo = VideoModel(null)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -68,11 +75,6 @@ class EventViewModel @Inject constructor(
                 }
         }
 
-    suspend fun getEvent(id: Long): Event = viewModelScope.async {
-        //EditPostFragment.getPost(repository.getPostById(id))
-        repository.getEventById(id)
-    }.await()
-
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -83,10 +85,18 @@ class EventViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    //медиавложение
+    //медиавложение(изображение)
     private val _photo = MutableLiveData(noPhoto)
     val photo: LiveData<PhotoModel>
         get() = _photo
+    //медиавложение(аудио)
+    private val _audio = MutableLiveData(noAudio)
+    val audio: LiveData<AudioModel>
+        get() = _audio
+    //медиавложение(видео)
+    private val _video = MutableLiveData(noVideo)
+    val video: LiveData<VideoModel>
+        get() = _video
 
     init {
         loadEvents()
@@ -105,9 +115,16 @@ class EventViewModel @Inject constructor(
     fun save() {
         edited.value?.let {
             viewModelScope.launch {
+                //определяем тип вложения
+                val upload: Uri? = when {
+                    _audio.value?.uri != null -> _audio.value?.uri
+                    _video.value?.uri != null -> _video.value?.uri
+                    _photo.value?.uri != null -> _photo.value?.uri
+                    else -> null
+                }
                 try {
                     repository.save(
-                        it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
+                        it, upload?.let { MediaUpload(upload.toFile()) }
                     )
 
                     _postCreated.value = Unit
@@ -139,16 +156,24 @@ class EventViewModel @Inject constructor(
         _photo.value = noPhoto
     }
 
-    fun changeContent(content: String) {
+    fun changeContent(content: String, dateTime: String) {
         val text = content.trim()
         if (edited.value?.content == text) {
             return
         }
-        edited.value = edited.value?.copy(content = text)
+        edited.value = edited.value?.copy(content = text, datetime = dateTime)
     }
 
     fun changePhoto(uri: Uri?) {
         _photo.value = PhotoModel(uri)
+    }
+
+    fun changeAudio(uri: Uri?) {
+        _audio.value = AudioModel(uri)
+    }
+
+    fun changeVideo(uri: Uri?) {
+        _video.value = VideoModel(uri)
     }
 
 
@@ -168,4 +193,27 @@ class EventViewModel @Inject constructor(
         }
 
     }
+
+    //список пользователей, поставивших лайк
+    suspend fun getLikedUsers(event: Event): List<Users> {
+        val list = event.likeOwnerIds
+        val listUsers: MutableList<Users> = ArrayList<Users>()
+        try {
+            for (id in list) {
+                val user = repository.getUserById(id)
+                listUsers.add(user)
+            }
+            return listUsers.toList()
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    suspend fun getEvent(id: Long): Event = viewModelScope.async {
+        //EditPostFragment.getPost(repository.getPostById(id))
+        repository.getEventById(id)
+
+    }.await()
 }
