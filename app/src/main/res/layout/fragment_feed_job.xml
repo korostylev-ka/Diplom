@@ -22,7 +22,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
         </fragment>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Кнопки посты и события -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +38,6 @@
             app:layout_constraintEnd_toStartOf="@id/events_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            style="@style/Widget.AppTheme.ButtonsControl"
             android:text="@string/posts_button">
         </com.google.android.material.button.MaterialButton>
         <com.google.android.material.button.MaterialButton
@@ -50,7 +48,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            style="@style/Widget.AppTheme.ButtonsControl"
             android:text="@string/events_button">
         </com.google.android.material.button.MaterialButton>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -92,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/card_event" />
+                tools:listitem="@layout/card_job" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -110,5 +107,5 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
 
+</LinearLayout>

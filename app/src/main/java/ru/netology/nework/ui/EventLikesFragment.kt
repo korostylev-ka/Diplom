@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import ru.netology.nework.R
 import ru.netology.nework.adapter.UsersAdapter
 import ru.netology.nework.databinding.FragmentEventLikesBinding
-
 import ru.netology.nework.dto.Users
 import ru.netology.nework.util.LongArg
 import ru.netology.nework.viewmodel.EventViewModel
@@ -47,7 +46,7 @@ class EventLikesFragment: Fragment() {
 
         //id события
         eventId = requireArguments().getLong(ID)
-        val text: String = getString(R.string.post) + " " + eventId.toString() + " " + getString(R.string.liked_users)
+        val text: String = getString(R.string.event) + " " + eventId.toString() + " " + getString(R.string.liked_users)
         binding.likeId.text = text
         lifecycleScope.launchWhenCreated {
             val event = viewModel.getEvent(eventId!!)

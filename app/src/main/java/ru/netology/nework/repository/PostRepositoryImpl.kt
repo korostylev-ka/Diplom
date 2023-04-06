@@ -9,9 +9,12 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
+import ru.netology.nework.dao.UsersDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.dto.*
 import ru.netology.nework.entity.PostEntity
+import ru.netology.nework.entity.UsersEntity
+import ru.netology.nework.entity.toDto
 import ru.netology.nework.entity.toEntity
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.error.ApiError
@@ -26,6 +29,7 @@ import javax.inject.Singleton
 class PostRepositoryImpl @Inject constructor(
     appDb: AppDb,
     private val postDao: PostDao,
+    private val usersDao: UsersDao,
     postRemoteKeyDao: PostRemoteKeyDao,
     private val apiService: ApiService,
 ) : PostRepository {
@@ -38,9 +42,17 @@ class PostRepositoryImpl @Inject constructor(
     ).flow.map { pagingData ->
         pagingData.map(PostEntity::toDto)
 
-            //вставка разделителя
 
     }
+
+    //список пользователей
+    override val users: Flow<List<Users>> = usersDao.getUsers().map(List<UsersEntity>::toDto)
+    override val usersNames: Flow<List<String>>
+        get() = usersDao.getNames()
+
+    fun getUsersList() = users
+
+    fun getUserNames() = usersNames
 
     override suspend fun getAll() {
         try {
@@ -193,6 +205,19 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getUserById(id: Long): Users {
         try {
             val response = apiService.getUserById(id)
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun getUsers(): List<Users> {
+        try {
+            val response = apiService.getUsers()
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            usersDao.insert(body.toEntity())
             return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: IOException) {
             throw NetworkError

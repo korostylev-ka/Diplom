@@ -32,8 +32,6 @@ data class PostEntity(
 
     @Embedded
     var attachment: AttachmentEmbeddable?,
-    //@Embedded
-    //val coords: Coordinates?,
 ) {
     fun toDto() = Post(
         id,
@@ -64,7 +62,6 @@ data class PostEntity(
                 dto.authorJob,
                 dto.content,
                 dto.published,
-                //dto.coords,
                 CoordinatesEmbeddable.fromDto(dto.coords),
                 dto.link,
                 dto.likeOwnerIds,
@@ -72,9 +69,6 @@ data class PostEntity(
                 dto.mentionedMe,
                 dto.likedByMe,
                 AttachmentEmbeddable.fromDto(dto.attachment),
-
-                //CoordinatesEmbeddable.fromDto(dto.coords),
-
             )
     }
 }
@@ -95,16 +89,5 @@ class ListIdsConverter {
     }
 }
 
-/*class CoordsConverter {
-    @TypeConverter
-    fun fromLong(value: String): Coordinates {
-        val coorsType = object: TypeToken<Coordinates>(){}.type
-        return Gson().fromJson(value, coorsType)
-    }
-    @TypeConverter
-    fun Coordinates(coords: Coordinates): String {
-        return Gson().toJson(coords.lat)
-    }
 
-}*/
 

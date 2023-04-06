@@ -77,6 +77,7 @@ class PostViewModel @Inject constructor(
                 }
         }
 
+
     //запрос поста по id
     /*suspend fun getPost(id: Long): Post{
         println("Запрос из ViewModel")
@@ -115,7 +116,10 @@ class PostViewModel @Inject constructor(
         get() = _video
 
     init {
+        //загружаем посты
         loadPosts()
+        //загружаем пользователей
+        getUsers()
     }
 
     fun loadPosts() = viewModelScope.launch {
@@ -165,16 +169,23 @@ class PostViewModel @Inject constructor(
 
 
     }
-
+    //редактируем пост
     fun edit(post: Post) {
+        //обновленный пост с контентом и без вложений
         edited.value = post
         edited.value?.let {
             viewModelScope.launch {
+                //определяем тип вложения
+                val upload: Uri? = when {
+                    _audio.value?.uri != null -> _audio.value?.uri
+                    _video.value?.uri != null -> _video.value?.uri
+                    _photo.value?.uri != null -> _photo.value?.uri
+                    else -> null
+                }
                 try {
                     repository.save(
-                        it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
+                        it, upload?.let { MediaUpload(upload.toFile()) }
                     )
-
                     _postCreated.value = Unit
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -183,14 +194,16 @@ class PostViewModel @Inject constructor(
         }
         edited.value = empty
         _photo.value = noPhoto
+        _audio.value = noAudio
+        _video.value = noVideo
     }
 
-    fun changeContent(content: String) {
+    fun changeContent(content: String, link: String?) {
         val text = content.trim()
         if (edited.value?.content == text) {
             return
         }
-        edited.value = edited.value?.copy(content = text)
+        edited.value = edited.value?.copy(content = text, link = link)
     }
 
     fun changePhoto(uri: Uri?) {
@@ -245,6 +258,26 @@ class PostViewModel @Inject constructor(
             throw UnknownError
         }
     }
+
+    //список пользователей
+    fun getUsers() = viewModelScope.launch{
+        try {
+            repository.getUsers()
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    suspend fun getUsersNames(): List<String> {
+        val list = repository.usersNames.flatMapConcat { it.asFlow() }.toList()
+        return list
+
+
+    }
+
+
 
 
 

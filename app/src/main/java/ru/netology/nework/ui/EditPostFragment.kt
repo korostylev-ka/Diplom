@@ -1,6 +1,7 @@
 package ru.netology.nework.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
@@ -41,6 +42,7 @@ import ru.netology.nework.ui.AuthFragment.Companion.textArg
 import ru.netology.nework.util.AndroidUtils
 import ru.netology.nework.util.LongArg
 import ru.netology.nework.util.StringArg
+import ru.netology.nework.util.UriPathHelper
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 import ru.netology.nework.viewmodel.PostViewModel
 import kotlin.system.measureNanoTime
@@ -80,25 +82,41 @@ class EditPostFragment : Fragment() {
 
         //id редактируемого поста
         postId = requireArguments().getLong(ID)
-        lifecycleScope.async {
-            requireActivity().setTitle("Редактирование поста")
+        lifecycleScope.launchWhenCreated {
+            requireActivity().setTitle(R.string.editing_post)
             //получаем поста
             val post = viewModel.getPost(postId!!)
             //заполняем данными
             binding.apply {
-                content.setText(post.content)
+                edit.setText(post.content)
+                link.setText(post.link)
                 when (post.attachment?.type) {
                     AttachmentType.IMAGE -> {
-                        attachment.isVisible = true
-                        Glide.with(binding.attachment)
+                        viewModel.changePhoto(post.attachment.url.toUri())
+                        photo.isVisible = true
+                        Glide.with(binding.photo)
                             .load(post.attachment.url)
                             .timeout(10_000)
-                            .into(binding.attachment)
+                            .into(binding.photo)
 
                     }
-                    else -> attachment.isVisible = false
+                    AttachmentType.AUDIO -> {
+                        viewModel.changeAudio(post.attachment.url.toUri())
+                        photo.isVisible = true
+                        binding.photo.setImageResource(R.drawable.ic_audio_48dp)
+
+                    }
+                    AttachmentType.VIDEO -> {
+                        viewModel.changeVideo(post.attachment.url.toUri())
+                        photo.isVisible = true
+                        photo.setImageResource(R.drawable.ic_video_48dp)
+
+                    }
+                    else -> photo.isVisible = true
                 }
             }
+
+
 
             requireActivity().addMenuProvider(object : MenuProvider {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -109,7 +127,13 @@ class EditPostFragment : Fragment() {
                     when (menuItem.itemId) {
                         R.id.save -> {
                             //формируем измененный пост
-                            val postChanged = post.copy(content = "binding.content.toString()")
+                            val content = binding.edit.text.toString()
+                            var link: String? = null
+                            //есть или нет текст ссылки
+                            if (!binding.link.text.isEmpty()) {
+                                link = binding.link.text.toString()
+                            }
+                            val postChanged = post.copy(content = content, link = link, attachment = null)
                             viewModel.edit(postChanged)
                             AndroidUtils.hideKeyboard(requireView())
                             true
@@ -135,6 +159,30 @@ class EditPostFragment : Fragment() {
                 }
             }
 
+        //запуск по аудио интенту
+        val pickAudioLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    Activity.RESULT_OK -> {
+                        //конвертируем путь файла к uri
+                        val filePath = UriPathHelper().fileFromContentUri(requireContext(),it.data?.data!! )
+                        viewModel.changeAudio(filePath.toUri())
+                    }
+                }
+            }
+
+        //запуск по видео интенту
+        val pickVideoLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    Activity.RESULT_OK -> {
+                        //конвертируем путь файла к uri
+                        val filePath = UriPathHelper().fileFromContentUri(requireContext(),it.data?.data!! )
+                        viewModel.changeVideo(filePath.toUri())
+                    }
+                }
+            }
+
         binding.pickPhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -149,6 +197,22 @@ class EditPostFragment : Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
 
+        //прикрепить аудио
+        binding.pickAudio.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("audio/*")
+            pickAudioLauncher.launch(intent)
+        }
+        //прикрепить видео
+        binding.pickVideo.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("video/*")
+            pickVideoLauncher.launch(intent)
+        }
+
+
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -157,8 +221,10 @@ class EditPostFragment : Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
 
-        binding.removePhoto.setOnClickListener {
+        binding.fabRemove.setOnClickListener {
             viewModel.changePhoto(null)
+            viewModel.changeAudio(null)
+            viewModel.changeVideo(null)
         }
 
         viewModel.postCreated.observe(viewLifecycleOwner) {
@@ -170,10 +236,29 @@ class EditPostFragment : Fragment() {
                 binding.photoContainer.visibility = View.GONE
                 return@observe
             }
-
             binding.photoContainer.visibility = View.VISIBLE
             binding.photo.setImageURI(it.uri)
         }
+
+        viewModel.audio.observe(viewLifecycleOwner) {
+            if (it.uri == null) {
+                binding.photoContainer.visibility = View.GONE
+                return@observe
+            }
+
+            binding.photoContainer.visibility = View.VISIBLE
+            binding.photo.setImageResource(R.drawable.ic_audio_48dp)
+        }
+        viewModel.video.observe(viewLifecycleOwner) {
+            if (it.uri == null) {
+                binding.photoContainer.visibility = View.GONE
+                return@observe
+            }
+
+            binding.photoContainer.visibility = View.VISIBLE
+            binding.photo.setImageResource(R.drawable.ic_video_48dp)
+        }
+
 
         return binding.root
     }

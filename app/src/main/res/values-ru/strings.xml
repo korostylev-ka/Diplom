@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">NeWork</string>
     <string name="hello">Привет, Мир!</string>
+    <string name="posts_button">ПОСТЫ</string>
+    <string name="events_button">СОБЫТИЯ</string>
     <string name="description_post_author_avatar">Аватар автора поста</string>
     <string name="description_post_menu">Меню поста</string>
     <string name="description_post_like">Нравится</string>
@@ -9,6 +11,7 @@
     <string name="description_post_save">Сохранить</string>
     <string name="description_post_attachment">Присоединенные медиа файлы</string>
     <string name="description_post_video">Видео</string>
+    <string name="link_hint">Вставьте ссылку</string>
     <string name="menu_edit">Изменить</string>
     <string name="menu_remove">Удалить</string>
     <string name="menu_save">Сохранить</string>
@@ -26,6 +29,8 @@
     <string name="channel_remote_description">Уведомления с удалённого сервера</string>
     <string name="description_select_photo">Выбрать фото</string>
     <string name="description_take_photo">Сделать фото</string>
+    <string name="post_content_hint">Введите текст вашего поста</string>
+    <string name="event_content_hint">Введите текст вашего события</string>
     <string name="description_photo">Фото</string>
     <string name="remove">Удалить</string>
     <string name="sign_in">Вход</string>
@@ -51,9 +56,13 @@
     <string name="user_exists">Пользователь уже зарегистрирован!</string>
     <string name="min_length">Минимальное количество символов: 1</string>
     <string name="editing_post">Редактирование поста</string>
+    <string name="editing_event">Редактирование события</string>
     <string name="new_post">Новый пост</string>
     <string name="new_event">Новое событие</string>
     <string name="user_links">Ссылки пользователя</string>
+    <string name="events_list">События</string>
+    <string name="posts_list">Посты</string>
+    <string name="jobs_list">Работы</string>
     <string name="description_pick_audio">Прикрепить аудио файл</string>
     <string name="description_pick_video">Прикрепить видео</string>
     <string name="description_remove_attachment">Удалить прикрепленный файл</string>
@@ -61,6 +70,9 @@
     <string name="event_online">Онлайн</string>
     <string name="event_offline">Оффлайн</string>
     <string name="post">Пост</string>
+    <string name="event">Событие</string>
     <string name="liked_users">понравился следующим пользователям:</string>
+    <string name="my_wall_button">МОЯ СТЕНА</string>
+    <string name="my_jobs_button">МОИ РАБОТЫ</string>
 
 </resources>

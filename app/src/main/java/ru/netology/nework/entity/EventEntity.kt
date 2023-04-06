@@ -1,6 +1,7 @@
 package ru.netology.nework.entity
 
 import androidx.room.*
+import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.dto.Event
 
 @Entity
@@ -15,6 +16,8 @@ data class EventEntity(
     val content: String,
     val datetime: String,
     val published: String,
+    @Embedded
+    val coords: CoordinatesEmbeddable?,
     val likeOwnerIds: MutableList<Long>,
     val likedByMe: Boolean,
     val speakerIds: MutableList<Long>,
@@ -22,11 +25,10 @@ data class EventEntity(
     val participatedByMe: Boolean,
     val link: String?,
     val ownedByMe: Boolean,
-
     @Embedded
     var type: TypeEmbeddable,
-    //@Embedded(prefix = "event_")
-    //var attachment: AttachmentEmbeddable?,
+    @Embedded(prefix = "event_")
+    var attachment: AttachmentEmbeddable?,
 ) {
     fun toDto() = Event(
         id,
@@ -37,18 +39,16 @@ data class EventEntity(
         content,
         datetime,
         published,
-        coords = null,
+        coords?.toDto(),
         type.toDto(),
         likeOwnerIds,
         likedByMe,
         speakerIds = ArrayList(),
         participantsIds = ArrayList(),
         participatedByMe,
-        attachment = null,
-        //attachment?.toDto(),
+        attachment?.toDto(),
         link,
         ownedByMe,
-
         )
 
     companion object {
@@ -62,6 +62,7 @@ data class EventEntity(
                 dto.content,
                 dto.datetime,
                 dto.published,
+                CoordinatesEmbeddable.fromDto(dto.coords),
                 dto.likeOwnerIds,
                 dto.likedByMe,
                 dto.speakerIds,
@@ -70,8 +71,7 @@ data class EventEntity(
                 dto.link,
                 dto.ownedByMe,
                 TypeEmbeddable.fromDto(dto.type),
-
-                //AttachmentEmbeddable.fromDto(dto.attachment),
+                AttachmentEmbeddable.fromDto(dto.attachment),
             )
     }
 }

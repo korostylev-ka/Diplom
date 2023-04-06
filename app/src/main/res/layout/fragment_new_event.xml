@@ -22,28 +22,35 @@
 
             <EditText
                 android:id="@+id/edit"
+                android:layout_margin="@dimen/common_spacing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
+                android:hint="@string/event_content_hint"
                 android:padding="@dimen/common_spacing" />
             <EditText
                 android:id="@+id/dateTime"
+                android:layout_margin="@dimen/common_spacing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
+                android:hint="@string/set_date_time"
                 android:padding="@dimen/common_spacing" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/setDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/common_spacing"
+                app:icon="@drawable/ic_date_time_48dp"
                 android:text="@string/set_date_time">
-
-            </Button>
+            </com.google.android.material.button.MaterialButton>
             <com.google.android.material.switchmaterial.SwitchMaterial
-                 android:layout_width="wrap_content"
+                android:id="@+id/switchOnline"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/common_spacing"
                 android:checked="true"
                 style="@style/Base.Widget.Material3.CompoundButton.Switch"
                 android:text="online"/>

@@ -72,10 +72,11 @@
     </style>
 
     <style name="Base.Widget.Material3.CompoundButton.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
-
         <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
         <item name="thumbTint">@color/switch_tint</item>
         <item name="trackTint">@color/m3_switch_track_tint</item>
+        <item name="android:textSize">@dimen/switch_text_size</item>
+        <item name="android:textColor">@color/switch_text_color</item>
         <item name="trackTintMode">src_in</item>
     </style>
 
@@ -85,6 +86,16 @@
         <item name="iconTint">@color/red</item>
         <item name="android:minWidth">@dimen/icon_button_min_size</item>
         <item name="android:minHeight">@dimen/icon_button_min_size</item>
+    </style>
+    <style name="Widget.AppTheme.ButtonsControl" parent="Widget.MaterialComponents.Button">
+
+        <item name="backgroundTint">@color/control_button_color</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="backgroundColor">@color/control_button_color</item>
+
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+        <item name="strokeColor">@color/control_button_stroke</item>
+        <item name="strokeWidth">2dp</item>
     </style>
 
 

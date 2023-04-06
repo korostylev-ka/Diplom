@@ -15,6 +15,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 import ru.netology.nework.BuildConfig
 import ru.netology.nework.R
 import ru.netology.nework.databinding.CardEventBinding
@@ -39,7 +43,6 @@ interface OnInteractionListenerEvent {
 
 private val typeEvent = 1
 
-
 private val mediaObserver = MediaLifecycleObserver()
 
 class EventsAdapter(
@@ -48,10 +51,7 @@ class EventsAdapter(
     //получаем тип элемента
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            //если тип разделитель, то ссылка на макет с разделителем
-            //is DateSeparator -> typeSepararor
             is Event -> typeEvent
-            //is Header -> typeHeader
             else -> throw IllegalArgumentException("unknown item type")
         }
     }
@@ -84,10 +84,20 @@ class EventsAdapter(
 
         fun bind(event: Event) {
             binding.apply {
-
+                MapKitFactory.getInstance().onStart()
+                mapView.onStart()
                 author.text = event.author
                 published.text = event.published
                 content.text = event.content
+                if (event.coords != null) {
+                    mapView.isVisible = true
+                    mapView.map.move(
+                        CameraPosition(Point(event.coords.lat.toDouble(), event.coords.long.toDouble()), 11.0f, 0.0f, 0.0f),
+                        Animation(Animation.Type.SMOOTH, 0F),
+                        null)
+                    //добавляем маркер на карту
+                    mapView.map.mapObjects.addPlacemark(Point(event.coords.lat.toDouble(), event.coords.long.toDouble()))
+                }
                 if (event.link != null) {
                     links.isVisible = true
                     links.text = event.link
@@ -114,7 +124,7 @@ class EventsAdapter(
                         //если вложение - аудио
                         AttachmentType.AUDIO -> {
                             attachment.isVisible = true
-                            attachment.setImageResource(R.drawable.audio_icon)
+                            attachment.setImageResource(R.drawable.ic_audio_48dp)
                             attachment.setOnClickListener {
                                 mediaObserver.apply {
                                     player?.setDataSource(
@@ -137,23 +147,13 @@ class EventsAdapter(
                                 }
                             }
 
-                            //attachment.setImageURI(Uri.parse(post.attachment.url))
-                            attachment.apply {
-
-                            }
-
                         }
-                        else -> attachment.isVisible = false
+
                     }
-                    //если тип вложения - изображение
-                    /*if (post.attachment.type == AttachmentType.IMAGE) {
-
-                }*/
-
 
                 }
                 if (event.authorAvatar != null) avatar.loadCircleCrop(event.authorAvatar)
-                else avatar.setImageResource(R.drawable.person_empty)
+                else avatar.setImageResource(R.drawable.ic_avatar_48dp)
                 like.isChecked = event.likedByMe
                 //like.text = "${post.likes}"
 

@@ -19,6 +19,7 @@ data class Header(
     override val id: Long,
 ) : FeedItem()
 
+//Пост
 data class Post(
     override val id: Long,
     val authorId: Long,
@@ -59,6 +60,15 @@ data class Event(
     val link: String?,
     val ownedByMe: Boolean = false,
     //val users: List<Users>? = null
+): FeedItem()
+
+data class Job(
+    override val id: Long,
+    val name: String,
+    val position: String,
+    val start: String,
+    val finish: String?,
+    val link: String?
 ): FeedItem()
 
 data class Attachment(

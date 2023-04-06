@@ -39,6 +39,25 @@ class FeedEventFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedEventBinding.inflate(inflater, container, false)
+        //кнопка События нажата
+        binding.eventsButton.isPressed = true
+
+        //переход на страницу постов
+        binding.postsButton.setOnClickListener {
+            val fragment = requireParentFragment()
+            //проверка текущего фрагмента
+            if (fragment !is FeedPostFragment){
+                findNavController().navigate(R.id.feedFragment)
+            }
+        }
+        //переход на страницу событий
+        binding.eventsButton.setOnClickListener {
+            val fragment = requireParentFragment()
+            //проверка текущего фрагмента
+            if (fragment !is FeedEventFragment) {
+                findNavController().navigate(R.id.feedEventFragment)
+            }
+        }
 
         //В зависимости от того, зарегистрированы или нет, показываем панель данных пользователя
         authViewModel.data.observe(viewLifecycleOwner) {
@@ -46,6 +65,7 @@ class FeedEventFragment : Fragment() {
                 //если авторизованы, запрашиваем данные пользователя
                 if (authViewModel.authenticated) {
                     binding.userBar.visibility = View.VISIBLE
+                    requireActivity().setTitle(R.string.events_list)
                 } else binding.userBar.visibility = View.GONE
             }
         }
@@ -55,8 +75,9 @@ class FeedEventFragment : Fragment() {
             override fun onEdit(event: Event) {
                 val bundle = Bundle()
                 bundle.putLong("id", event.id)
-                //переходим на страницу редактирования, передавая в поле логин значение id поста
-                //findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, EditPostFragment.createArguments(post.id)
+                //переходим на страницу редактирования, передавая в поле логин значение id события
+                findNavController().navigate(R.id.editEventFragment, EditPostFragment.createArguments(event.id)
+                )
 
             }
 

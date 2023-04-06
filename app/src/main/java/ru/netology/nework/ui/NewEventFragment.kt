@@ -7,6 +7,7 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -39,7 +40,7 @@ class NewEventFragment: Fragment() {
 
     //функция установки даты и времени события
     @SuppressLint("SimpleDateFormat")
-    private fun pickDateTime() {
+    private fun pickDateTime(editText: EditText) {
         val currentDateTime = Calendar.getInstance()
         val startYear = currentDateTime.get(Calendar.YEAR)
         val startMonth = currentDateTime.get(Calendar.MONTH)
@@ -53,8 +54,7 @@ class NewEventFragment: Fragment() {
                 val dateTimeLong = pickedDateTime.timeInMillis
                 val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dateTimeLong)
                 //присваиваем полю значение времени
-                fragmentBinding?.dateTime?.setText(date)
-
+                editText.setText(date)
             }, startHour, startMinute, true).show()
         }, startYear, startMonth, startDay).show()
 
@@ -87,7 +87,13 @@ class NewEventFragment: Fragment() {
 
         //обработка нажатия установки даты
         binding.setDate.setOnClickListener {
-            pickDateTime()
+            pickDateTime(binding.dateTime)
+        }
+        //в зависимости от положения переключателя типа события, меняем текст
+        binding.switchOnline.setOnClickListener {
+            if (binding.switchOnline.isChecked) {
+                binding.switchOnline.setText(R.string.event_online)
+            } else binding.switchOnline.setText(R.string.event_offline)
 
         }
 
@@ -179,7 +185,7 @@ class NewEventFragment: Fragment() {
             viewModel.changeVideo(null)
         }
 
-        viewModel.postCreated.observe(viewLifecycleOwner) {
+        viewModel.eventCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
 
@@ -222,7 +228,10 @@ class NewEventFragment: Fragment() {
                     R.id.save -> {
                         fragmentBinding?.let {
                             //передаем текст события и дату
-                            viewModel.changeContent(it.edit.text.toString(), it.dateTime.text.toString())
+                            val content = it.edit.text.toString()
+                            val dateTime = it.dateTime.text.toString()
+                            val isOnline = binding.switchOnline.isChecked
+                            viewModel.changeContent(content, dateTime, isOnline)
                             viewModel.save()
                             AndroidUtils.hideKeyboard(requireView())
                         }

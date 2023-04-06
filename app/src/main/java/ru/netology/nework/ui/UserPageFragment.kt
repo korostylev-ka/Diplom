@@ -38,7 +38,12 @@ class UserPageFragment : Fragment() {
             inflater,
             container,
             false
+
         )
+        //проверяем фрагмент, и если это фрагмент работ, делаем статус кнопки "нажато"
+        val fragment = requireParentFragment()
+        if (fragment is FeedJobFragment) binding.jobButton.isPressed = true
+
 
         //В зависимости от того, зарегистрированы или нет, показываем панель данных пользователя
         authViewModel.data.observe(viewLifecycleOwner) {
@@ -51,27 +56,31 @@ class UserPageFragment : Fragment() {
                         if (user.avatar != null) {
                             userAvatar.loadCircleCrop(user.avatar)
                         } else {
-                            userAvatar.setImageResource(R.drawable.person_empty)
+                            userAvatar.setImageResource(R.drawable.ic_avatar_black_48dp)
                         }
                         userId.setText(auth.authStateFlow.value.id.toString())
                         //переход на страницу постов
-                        postButton.setOnClickListener {
-                            val fragment = requireParentFragment()
+                        wallButton.setOnClickListener {
+                            /*val fragment = requireParentFragment()
                             //проверка текущего фрагмента
                             if (fragment !is FeedPostFragment){
                                 findNavController().navigate(R.id.action_feedEventFragment_to_feedFragment)
-                            }
+                            }*/
 
                         }
-                        //переход на страницу событий
-                        eventButton.setOnClickListener {
+
+                        //переход на страницу job
+                        jobButton.setOnClickListener {
                             val fragment = requireParentFragment()
+                            println("Fragment is $fragment")
+                            if (fragment is FeedJobFragment) binding.jobButton.isPressed = true
+
+                            findNavController().navigate(R.id.feedJobFragment)
+                            /*val fragment = requireParentFragment()
                             //проверка текущего фрагмента
                             if (fragment !is FeedEventFragment) {
                                 findNavController().navigate(R.id.action_feedFragment_to_feedEventFragment)
-                            }
-
-
+                            }*/
                         }
 
                     }

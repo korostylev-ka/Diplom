@@ -117,6 +117,7 @@ class NewPostFragment : Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
 
+        //сделать фото
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -188,7 +189,13 @@ class NewPostFragment : Fragment() {
                 when (menuItem.itemId) {
                     R.id.save -> {
                         fragmentBinding?.let {
-                            viewModel.changeContent(it.edit.text.toString())
+                            val content = it.edit.text.toString()
+                            var link: String? = null
+                            //есть или нет текст ссылки
+                            if (!it.link.text.isEmpty()) {
+                                link = it.link.text.toString()
+                            }
+                            viewModel.changeContent(content, link)
                             viewModel.save()
                             AndroidUtils.hideKeyboard(requireView())
                         }
@@ -198,6 +205,15 @@ class NewPostFragment : Fragment() {
                 }
 
         }, viewLifecycleOwner)
+
+        binding.addUsers.setOnClickListener {
+            /*val myDialogFragment = DialogUsersSelectFragment()
+            val manager = parentFragmentManager
+            myDialogFragment.show(manager, "myDialog")*/
+            lifecycleScope.launchWhenCreated {
+                println("ЗАПРОС ${viewModel.getUsersNames()}")
+            }
+        }
 
         return binding.root
     }

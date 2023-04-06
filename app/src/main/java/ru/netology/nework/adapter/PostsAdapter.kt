@@ -39,10 +39,7 @@ interface OnInteractionListenerPost {
     fun onShare(post: Post) {}
     fun onOpenLikes(post: Post) {}
 }
-private val typeSepararor = 0
 private val typePost = 1
-private val typeHeader = 2
-
 private val mediaObserver = MediaLifecycleObserver()
 
 class PostsAdapter(
@@ -94,13 +91,13 @@ class PostsAdapter(
                 if (post.coords != null) {
                     mapView.isVisible = true
                     mapView.map.move(
-                        CameraPosition(Point(55.751574, 37.573856), 11.0f, 0.0f, 0.0f),
+                        CameraPosition(Point(post.coords.lat.toDouble(), post.coords.long.toDouble()), 11.0f, 0.0f, 0.0f),
                         Animation(Animation.Type.SMOOTH, 0F),
                         null)
                     //добавляем маркер на карту
-                    mapView.map.mapObjects.addPlacemark(Point(55.751574, 37.573856))
+                    mapView.map.mapObjects.addPlacemark(Point(post.coords.lat.toDouble(), post.coords.long.toDouble()))
                 }
-
+                //количество лайков
                 likes.text = post.likeOwnerIds.size.toString()
                 //если вложений нет, view невидима и не занимает места
                 if (post.attachment == null) {
@@ -146,10 +143,8 @@ class PostsAdapter(
                     }
                 }
                 if (post.authorAvatar != null) avatar.loadCircleCrop(post.authorAvatar)
-                else avatar.setImageResource(R.drawable.person_empty)
+                else avatar.setImageResource(R.drawable.ic_avatar_48dp)
                 like.isChecked = post.likedByMe
-                //like.text = "${post.likes}"
-
                 menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
 
                 menu.setOnClickListener {

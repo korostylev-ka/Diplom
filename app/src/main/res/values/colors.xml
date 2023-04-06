@@ -8,4 +8,5 @@
     <color name="yellow_logo">#F4F680</color>
     <color name="author_name">#0E2293</color>
     <color name="red">#FFF44336</color>
+    <color name="black">#000000</color>
 </resources>

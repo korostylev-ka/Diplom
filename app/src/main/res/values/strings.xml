@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">NeWork</string>
     <string name="hello">Hello World!</string>
+    <string name="posts_button">POSTS</string>
+    <string name="events_button">EVENTS</string>
     <string name="description_post_author_avatar">Post author avatar</string>
     <string name="description_post_menu">Post menu</string>
     <string name="description_post_like">Like</string>
@@ -8,6 +10,9 @@
     <string name="description_post_save">Save</string>v
     <string name="description_post_attachment">Attachment</string>
     <string name="description_post_video">Video attachment</string>
+    <string name="post_content_hint">Enter here your post text</string>
+    <string name="event_content_hint">Enter here your event text</string>
+    <string name="link_hint">Insert link</string>
     <string name="menu_remove">Remove</string>
     <string name="post_text">Post Text</string>
     <string name="menu_edit">Edit</string>
@@ -50,9 +55,13 @@
     <string name="user_exists">Same user already exists!</string>
     <string name="min_length">Min lenght: 1</string>
     <string name="editing_post">Post editing</string>
+    <string name="editing_event">Event editing</string>
     <string name="new_post">New post</string>
     <string name="new_event">New event</string>
     <string name="user_links">User links</string>
+    <string name="events_list">Events</string>
+    <string name="posts_list">Posts</string>
+    <string name="jobs_list">Jobs</string>
     <string name="description_pick_audio">Pick audio file</string>
     <string name="description_pick_video">Pick video</string>
     <string name="description_remove_attachment">Remove attachment</string>
@@ -60,7 +69,10 @@
     <string name="event_online">Online</string>
     <string name="event_offline">Offline</string>
     <string name="post">Post</string>
+    <string name="event">Event</string>
     <string name="liked_users">liked by next users:</string>
+    <string name="my_wall_button">MY WALL</string>
+    <string name="my_jobs_button">MY JOBS</string>
 
 
 

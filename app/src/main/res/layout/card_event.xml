@@ -132,7 +132,13 @@
                 app:layout_constraintTop_toBottomOf="@id/attachment"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/footer"/>
-
+            <com.yandex.mapkit.mapview.MapView
+                android:id="@+id/mapView"
+                app:layout_constraintBottom_toTopOf="@id/footer"
+                app:layout_constraintTop_toBottomOf="@id/attachment_maps"
+                android:visibility="gone"
+                android:layout_width="@dimen/map_size"
+                android:layout_height="@dimen/map_size"/>
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/footer"

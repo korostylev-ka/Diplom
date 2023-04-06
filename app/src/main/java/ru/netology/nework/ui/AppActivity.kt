@@ -106,17 +106,13 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                     R.id.signin -> {
                     //переход на страницу аутентентификации
                         findNavController(R.id.nav_host_fragment)
-                            .navigate(
-                                R.id.action_feedFragment_to_authFragment,
-                            )
+                            .navigate(R.id.authFragment)
                         true
                     }
                     R.id.signup -> {
                         //переход на страницу регистрации
                         findNavController(R.id.nav_host_fragment)
-                            .navigate(
-                                R.id.action_feedFragment_to_regFragment,
-                            )
+                            .navigate(R.id.registrationFragment)
                         true
                     }
                     R.id.signout -> {

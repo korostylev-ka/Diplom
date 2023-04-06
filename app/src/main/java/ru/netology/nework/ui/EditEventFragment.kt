@@ -1,9 +1,14 @@
 package ru.netology.nework.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import android.widget.MediaController
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
@@ -38,13 +43,17 @@ import ru.netology.nework.databinding.FragmentNewPostBinding
 import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.Post
 import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.enumeration.EventType
 import ru.netology.nework.ui.AuthFragment.Companion.textArg
 import ru.netology.nework.util.AndroidUtils
 import ru.netology.nework.util.LongArg
 import ru.netology.nework.util.StringArg
+import ru.netology.nework.util.UriPathHelper
 import ru.netology.nework.viewmodel.EventViewModel
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 import ru.netology.nework.viewmodel.PostViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.system.measureNanoTime
 
 private const val ID = "id"
@@ -52,6 +61,28 @@ private const val ID = "id"
 //фрагмент редактирования поста
 @AndroidEntryPoint
 class EditEventFragment: Fragment() {
+
+    //функция установки даты и времени события
+    @SuppressLint("SimpleDateFormat")
+    private fun pickDateTime(editText: EditText) {
+        val currentDateTime = Calendar.getInstance()
+        val startYear = currentDateTime.get(Calendar.YEAR)
+        val startMonth = currentDateTime.get(Calendar.MONTH)
+        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+        val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+        val startMinute = currentDateTime.get(Calendar.MINUTE)
+        DatePickerDialog(requireContext(), { _, year, month, day ->
+            TimePickerDialog(requireContext(), { _, hour, minute ->
+                val pickedDateTime = Calendar.getInstance()
+                pickedDateTime.set(year, month, day, hour, minute)
+                val dateTimeLong = pickedDateTime.timeInMillis
+                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dateTimeLong)
+                //присваиваем полю значение времени
+                editText.setText(date)
+            }, startHour, startMinute, true).show()
+        }, startYear, startMonth, startDay).show()
+    }
+
     //для передачи id события
     companion object {
         var Bundle.longArgs: Long by LongArg
@@ -80,23 +111,49 @@ class EditEventFragment: Fragment() {
             false
         )
 
+        //в зависимости от положения переключателя типа события, меняем текст
+        binding.switchOnline.setOnClickListener {
+            if (binding.switchOnline.isChecked) {
+                binding.switchOnline.setText(R.string.event_online)
+            } else binding.switchOnline.setText(R.string.event_offline)
+
+        }
+
+        //обработка нажатия установки даты
+        binding.setDate.setOnClickListener {
+            pickDateTime(binding.dateTime)
+        }
+
         //id редактируемого события
         eventId = requireArguments().getLong(ID)
         lifecycleScope.async {
-            requireActivity().setTitle("Редактирование поста")
+            requireActivity().setTitle(R.string.editing_event)
             //получаем событие
             val event = viewModel.getEvent(eventId!!)
             binding.apply {
-                content.setText(event.content)
+                edit.setText(event.content)
+                dateTime.setText(event.datetime)
                 when (event.attachment?.type) {
                     AttachmentType.IMAGE -> {
-                        attachment.isVisible = true
-                        Glide.with(binding.attachment)
+                        photoContainer.isVisible = true
+                        Glide.with(binding.photo)
                             .load(event.attachment.url)
                             .timeout(10_000)
-                            .into(binding.attachment)
+                            .into(binding.photo)
                     }
-                    else -> attachment.isVisible = false
+                    AttachmentType.AUDIO -> {
+                        photoContainer.isVisible = true
+                        viewModel.changeAudio(event.attachment.url.toUri())
+                        binding.photo.setImageResource(R.drawable.ic_audio_48dp)
+
+                    }
+                    AttachmentType.VIDEO -> {
+                        photoContainer.isVisible = true
+                        viewModel.changeVideo(event.attachment.url.toUri())
+                        photo.setImageResource(R.drawable.ic_video_48dp)
+
+                    }
+                    else -> photoContainer.isVisible = false
                 }
             }
 
@@ -108,9 +165,15 @@ class EditEventFragment: Fragment() {
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                     when (menuItem.itemId) {
                         R.id.save -> {
-                            //формируем измененный пост
-                            val postChanged = event.copy(content = "binding.content.toString()")
-                            viewModel.edit(postChanged)
+                            //формируем измененное событие
+                            val content = binding.edit.text.toString()
+                            val dateTime = binding.dateTime.text.toString()
+                            val type = when (binding.switchOnline.isChecked) {
+                                true -> EventType.ONLINE
+                                else -> EventType.OFFLINE
+                            }
+                            val eventChanged = event.copy(content = content, datetime = dateTime, type = type, attachment = null)
+                            viewModel.edit(eventChanged)
                             AndroidUtils.hideKeyboard(requireView())
                             true
                         }
@@ -120,7 +183,7 @@ class EditEventFragment: Fragment() {
             }, viewLifecycleOwner)
 
         }
-
+        //интент по фото
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -135,6 +198,31 @@ class EditEventFragment: Fragment() {
                 }
             }
 
+        //запуск по аудио интенту
+        val pickAudioLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    Activity.RESULT_OK -> {
+                        //конвертируем путь файла к uri
+                        val filePath = UriPathHelper().fileFromContentUri(requireContext(),it.data?.data!! )
+                        viewModel.changeAudio(filePath.toUri())
+                    }
+                }
+            }
+
+        //запуск по видео интенту
+        val pickVideoLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    Activity.RESULT_OK -> {
+                        //конвертируем путь файла к uri
+                        val filePath = UriPathHelper().fileFromContentUri(requireContext(),it.data?.data!! )
+                        viewModel.changeVideo(filePath.toUri())
+                    }
+                }
+            }
+
+        //выбрать фото
         binding.pickPhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -149,6 +237,7 @@ class EditEventFragment: Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
 
+        //сделать фото
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -157,14 +246,34 @@ class EditEventFragment: Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
 
-        binding.removePhoto.setOnClickListener {
-            viewModel.changePhoto(null)
+        //прикрепить аудио
+        binding.pickAudio.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("audio/*")
+            pickAudioLauncher.launch(intent)
         }
 
-        viewModel.postCreated.observe(viewLifecycleOwner) {
+        //прикрепить видео
+        binding.pickVideo.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("video/*")
+            pickVideoLauncher.launch(intent)
+        }
+
+        //удалить все вложения
+        binding.fabRemove.setOnClickListener {
+            viewModel.changePhoto(null)
+            viewModel.changeAudio(null)
+            viewModel.changeVideo(null)
+        }
+
+        viewModel.eventCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
 
+        //подписка на изменения вложений изображения
         viewModel.photo.observe(viewLifecycleOwner) {
             if (it.uri == null) {
                 binding.photoContainer.visibility = View.GONE
@@ -173,6 +282,25 @@ class EditEventFragment: Fragment() {
 
             binding.photoContainer.visibility = View.VISIBLE
             binding.photo.setImageURI(it.uri)
+        }
+        //подписка на изменения вложений аудио
+        viewModel.audio.observe(viewLifecycleOwner) {
+            if (it.uri == null) {
+                binding.photoContainer.visibility = View.GONE
+                return@observe
+            }
+
+            binding.photoContainer.visibility = View.VISIBLE
+            binding.photo.setImageResource(R.drawable.ic_audio_48dp)
+        }
+        //подписка на изменения вложений видео
+        viewModel.video.observe(viewLifecycleOwner) {
+            if (it.uri == null) {
+                binding.photoContainer.visibility = View.GONE
+                return@observe
+            }
+            binding.photoContainer.visibility = View.VISIBLE
+            binding.photo.setImageResource(R.drawable.ic_video_48dp)
         }
 
         return binding.root

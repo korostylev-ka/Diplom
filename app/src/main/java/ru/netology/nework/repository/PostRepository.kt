@@ -6,6 +6,8 @@ import ru.netology.nework.dto.*
 
 interface PostRepository {
     val data: Flow<PagingData<FeedItem>>
+    val users: Flow<List<Users>>
+    val usersNames: Flow<List<String>>
     suspend fun getAll()
     suspend fun getPostById(id: Long): Post
     fun getNewerCount(id: Long): Flow<Int>
@@ -16,4 +18,5 @@ interface PostRepository {
     suspend fun like(id: Long, isLiked: Boolean)
     suspend fun upload(upload: MediaUpload): Media
     suspend fun getUserById(id: Long): Users
+    suspend fun getUsers(): List<Users>
 }

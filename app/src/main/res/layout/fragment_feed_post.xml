@@ -16,13 +16,42 @@
             android:tag="@string/user_links"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
+            android:visibility="gone"
             android:name="ru.netology.nework.ui.UserPageFragment"
             tools:layout="@layout/fragment_user_page"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
         </fragment>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Кнопки посты и события -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/post_event_buttons"
+        android:padding="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.button.MaterialButton
+            android:layout_margin="0dp"
+            android:id="@+id/posts_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/events_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/Widget.AppTheme.ButtonsControl"
+            android:text="@string/posts_button">
+        </com.google.android.material.button.MaterialButton>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/events_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/posts_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/Widget.AppTheme.ButtonsControl"
+            android:text="@string/events_button">
+        </com.google.android.material.button.MaterialButton>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -71,6 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true"
+            android:visibility="gone"
             android:contentDescription="@string/add_post"
             android:focusable="true"
             android:layout_gravity="bottom|end"

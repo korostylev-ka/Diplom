@@ -82,6 +82,9 @@ interface ApiService {
     @GET("users/{id}")
     suspend fun getUserById(@Path("id") id: Long): Response<Users>
 
+    @GET("users/")
+    suspend fun getUsers(): Response<List<Users>>
+
     //получаем токен при корректной аутентификации
     @FormUrlEncoded
     @POST("users/authentication")
@@ -107,7 +110,7 @@ interface ApiService {
     @GET("events/{id}")
     suspend fun getEventById(@Path("id") id: Long): Response<Event>
 
-    @GET("posts/{id}/newer")
+    @GET("events/{id}/newer")
     suspend fun getNewerEvent(@Path("id") id: Long): Response<List<Event>>
 
     @POST("events")
@@ -122,6 +125,13 @@ interface ApiService {
     @DELETE("events/{id}/likes")
     suspend fun dislikeEventById(@Path("id") id: Long): Response<Event>
 
+    //Для запросов Job's
+    @GET("my/jobs")
+    suspend fun getMyJobs(): Response<List<Job>>
+
+    @POST("my/jobs")
+    suspend fun saveJob(@Body job: Job): Response<Job>
 
 
 }
+

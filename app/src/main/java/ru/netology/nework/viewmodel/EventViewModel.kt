@@ -81,9 +81,9 @@ class EventViewModel @Inject constructor(
         get() = _dataState
 
     private val edited = MutableLiveData(empty)
-    private val _postCreated = SingleLiveEvent<Unit>()
-    val postCreated: LiveData<Unit>
-        get() = _postCreated
+    private val _eventCreated = SingleLiveEvent<Unit>()
+    val eventCreated: LiveData<Unit>
+        get() = _eventCreated
 
     //медиавложение(изображение)
     private val _photo = MutableLiveData(noPhoto)
@@ -127,7 +127,7 @@ class EventViewModel @Inject constructor(
                         it, upload?.let { MediaUpload(upload.toFile()) }
                     )
 
-                    _postCreated.value = Unit
+                    _eventCreated.value = Unit
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -135,18 +135,27 @@ class EventViewModel @Inject constructor(
         }
         edited.value = empty
         _photo.value = noPhoto
+        _audio.value = noAudio
+        _video.value = noVideo
     }
 
     fun edit(event: Event) {
         edited.value = event
         edited.value?.let {
             viewModelScope.launch {
+                //определяем тип вложения
+                val upload: Uri? = when {
+                    _audio.value?.uri != null -> _audio.value?.uri
+                    _video.value?.uri != null -> _video.value?.uri
+                    _photo.value?.uri != null -> _photo.value?.uri
+                    else -> null
+                }
                 try {
                     repository.save(
-                        it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
+                        it, upload?.let { MediaUpload(upload.toFile()) }
                     )
 
-                    _postCreated.value = Unit
+                    _eventCreated.value = Unit
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -154,14 +163,21 @@ class EventViewModel @Inject constructor(
         }
         edited.value = empty
         _photo.value = noPhoto
+        _audio.value = noAudio
+        _video.value = noVideo
     }
 
-    fun changeContent(content: String, dateTime: String) {
+    fun changeContent(content: String, dateTime: String, isOnline: Boolean) {
         val text = content.trim()
         if (edited.value?.content == text) {
             return
         }
-        edited.value = edited.value?.copy(content = text, datetime = dateTime)
+        //проверяем тип события
+        val type = when (isOnline) {
+            true -> EventType.ONLINE
+            else -> EventType.OFFLINE
+        }
+        edited.value = edited.value?.copy(content = text, datetime = dateTime, type = type)
     }
 
     fun changePhoto(uri: Uri?) {

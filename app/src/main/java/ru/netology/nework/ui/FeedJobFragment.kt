@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -15,41 +15,40 @@ import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
-import ru.netology.nework.adapter.OnInteractionListenerPost
+import ru.netology.nework.adapter.*
 
-import ru.netology.nework.adapter.PagingLoadStateAdapter
-import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.auth.AppAuth
+import ru.netology.nework.databinding.FragmentFeedJobBinding
 import ru.netology.nework.databinding.FragmentFeedPostBinding
+import ru.netology.nework.dto.Job
 
 import ru.netology.nework.dto.Post
+import ru.netology.nework.repository.JobRepository
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.viewmodel.AuthViewModel
+import ru.netology.nework.viewmodel.JobViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class FeedPostFragment : Fragment() {
+class FeedJobFragment : Fragment() {
     @Inject
-    lateinit var repository: PostRepository
-
+    lateinit var repository: JobRepository
     @Inject
     lateinit var auth: AppAuth
-    private val viewModel: PostViewModel by activityViewModels()
+    private val viewModel: JobViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by viewModels()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentFeedPostBinding.inflate(inflater, container, false)
-        //кнопка Посты нажата
-        binding.postsButton.isPressed = true
+        val binding = FragmentFeedJobBinding.inflate(inflater, container, false)
 
 
-        //переход на страницу постов
         binding.postsButton.setOnClickListener {
             val fragment = requireParentFragment()
             //проверка текущего фрагмента
@@ -72,35 +71,30 @@ class FeedPostFragment : Fragment() {
                 //если авторизованы, запрашиваем данные пользователя
                 if (authViewModel.authenticated) {
                     binding.userBar.visibility = View.VISIBLE
-                    binding.fab.isVisible = true
-                    requireActivity().setTitle(R.string.posts_list)
+                    requireActivity().setTitle(R.string.jobs_list)
                 } else binding.userBar.visibility = View.GONE
             }
         }
 
 
-        val adapter = PostsAdapter(object : OnInteractionListenerPost {
-            //редактирование поста
-            override fun onEdit(post: Post) {
-                val bundle = Bundle()
-                bundle.putLong("id", post.id)
+        val adapter = JobsAdapter(object : OnInteractionListener {
+            //редактирование job
+            override fun onEdit(job: Job) {
+                /*val bundle = Bundle()
+                bundle.putLong("id", job.id)
                 //переходим на страницу редактирования, передавая в поле логин значение id поста
                 findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, EditPostFragment.createArguments(post.id)
-                )
+                )*/
             }
 
-            override fun onLike(post: Post) {
-                viewModel.like(post.id, post.likedByMe)
+            override fun onRemove(job: Job) {
+                //viewModel.removeById(post.id)
             }
 
-            override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
-            }
-
-            override fun onShare(post: Post) {
+            override fun onShare(job: Job) {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    putExtra(Intent.EXTRA_TEXT, job.name)
                     type = "text/plain"
                 }
 
@@ -109,48 +103,26 @@ class FeedPostFragment : Fragment() {
                 startActivity(shareIntent)
             }
 
-            override fun onOpenLikes(post: Post) {
-                findNavController().navigate(R.id.action_feedFragment_to_listLikesFragment, PostLikesFragment.createArguments(post.id))
-            }
         })
 
 
 
-        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
-            header = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
-                override fun onRetry() {
-                    adapter.retry()
-                }
-            }),
-            footer = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
-                override fun onRetry() {
-                    adapter.retry()
-                }
-            }),
-        )
+        binding.list.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest(adapter::submitData)
-        }
-
-        lifecycleScope.launchWhenCreated {
-            adapter.loadStateFlow.collectLatest { state ->
-                //Refreshing отображается только при REFRESH
-                binding.swiperefresh.isRefreshing =
-                    state.refresh is LoadState.Loading
-
+            viewModel.data.observe(viewLifecycleOwner) {state->
+                adapter.submitList(state.jobs)
             }
         }
 
-        binding.swiperefresh.setOnRefreshListener(adapter::refresh)
+
+
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            findNavController().navigate(R.id.newJobFragment)
         }
 
 
         return binding.root
     }
-
-
 }
