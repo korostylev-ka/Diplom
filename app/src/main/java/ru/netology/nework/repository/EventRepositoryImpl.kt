@@ -9,12 +9,9 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.dao.EventDao
 import ru.netology.nework.dao.EventRemoteKeyDao
-import ru.netology.nework.dao.PostDao
-import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.dto.*
 import ru.netology.nework.entity.EventEntity
-import ru.netology.nework.entity.PostEntity
 import ru.netology.nework.entity.toEntity
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.error.ApiError
@@ -40,25 +37,6 @@ class EventRepositoryImpl @Inject constructor(
         pagingSourceFactory = eventDao::pagingSource,
     ).flow.map { pagingData ->
         pagingData.map(EventEntity::toDto)
-
-        //вставка разделителя
-
-    }
-
-    override suspend fun getAll() {
-        /*try {
-            val response = apiService.getAll()
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            eventDao.insert(body.toEntity())
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }*/
     }
 
     //получаем событие по id
@@ -120,7 +98,6 @@ class EventRepositoryImpl @Inject constructor(
             throw UnknownError
         }
     }
-
 
     override suspend fun removeById(id: Long) {
         try {

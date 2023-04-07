@@ -1,35 +1,16 @@
 package ru.netology.nework.adapter
 
-import android.net.Uri
-import android.os.Bundle
+
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.MediaController
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
-
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import ru.netology.nework.BuildConfig
 import ru.netology.nework.R
-import ru.netology.nework.databinding.CardEventBinding
 import ru.netology.nework.databinding.CardJobBinding
-import ru.netology.nework.databinding.CardPostBinding
-import ru.netology.nework.databinding.HeaderBinding
-import ru.netology.nework.databinding.SeparatorDateItemBinding
 import ru.netology.nework.dto.*
-import ru.netology.nework.enumeration.AttachmentType
-import ru.netology.nework.enumeration.EventType
-import ru.netology.nework.ui.AuthFragment.Companion.textArg
-import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
-import ru.netology.nework.view.loadCircleCrop
-import ru.netology.nework.viewmodel.MediaLifecycleObserver
 
 interface OnInteractionListener {
     fun onEdit(job: Job) {}
@@ -37,6 +18,7 @@ interface OnInteractionListener {
     fun onShare(job: Job) {}
 }
 
+//адаптер для работ
 class JobsAdapter(
     private val onInteractionListener: OnInteractionListener,
 ) : ListAdapter<Job, JobViewHolder>(JobDiffCallback()) {
@@ -60,6 +42,10 @@ class JobViewHolder(
         binding.apply {
             jobName.text = job.name
             jobPosition.text = job.position
+            if (job.link != null) {
+                jobLink.isVisible = true
+                jobLink.text = job.link
+            }
             jobStart.text = job.start
             jobFinish.text = job.finish
 
@@ -76,13 +62,11 @@ class JobViewHolder(
                                 onInteractionListener.onEdit(job)
                                 true
                             }
-
                             else -> false
                         }
                     }
                 }.show()
             }
-
 
         }
     }

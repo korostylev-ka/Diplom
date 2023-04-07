@@ -5,9 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import ru.netology.nework.entity.EventEntity
 import ru.netology.nework.entity.JobEntity
-import ru.netology.nework.entity.PostEntity
 
 @Dao
 interface JobDao {
@@ -19,4 +17,10 @@ interface JobDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(jobs: List<JobEntity>)
+
+    @Query("DELETE FROM JobEntity WHERE id = :id")
+    suspend fun removeById(id: Long)
+
+    @Query("SELECT * FROM JobEntity WHERE id = :id")
+    fun getJob(id: Long): JobEntity
 }

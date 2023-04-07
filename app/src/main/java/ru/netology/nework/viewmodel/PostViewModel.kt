@@ -2,7 +2,6 @@ package ru.netology.nework.viewmodel
 
 import android.net.Uri
 import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.lifecycle.*
 import androidx.paging.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +14,6 @@ import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.MediaUpload
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.Users
-import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.NetworkError
 import ru.netology.nework.error.UnknownError
 import ru.netology.nework.model.AudioModel
@@ -23,10 +21,7 @@ import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.PhotoModel
 import ru.netology.nework.model.VideoModel
 import ru.netology.nework.repository.PostRepository
-import ru.netology.nework.ui.EditPostFragment
 import ru.netology.nework.util.SingleLiveEvent
-import ru.netology.nework.util.UriPathHelper
-import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
@@ -45,7 +40,6 @@ private val empty = Post(
     likeOwnerIds = ArrayList(),
     link = null,
     mentionIds = emptyList(),
-    //users = null,
 )
 
 private val noPhoto = PhotoModel(null)
@@ -76,14 +70,20 @@ class PostViewModel @Inject constructor(
                     }
                 }
         }
-
-
-    //запрос поста по id
-    /*suspend fun getPost(id: Long): Post{
-        println("Запрос из ViewModel")
-        val post = repository.getPostById(id)
-        return post
-    }*/
+    //данные постов MyWall
+    val myWallData: Flow<PagingData<FeedItem>> = auth.authStateFlow.flatMapLatest {(myId, _) ->
+        repository.dataMyWall
+            .map { pagingData ->
+                pagingData.map { post ->
+                    //если объект является постом, то копируем
+                    if (post is Post) {
+                        post.copy(ownedByMe = post.authorId == myId)
+                    } else {
+                        post
+                    }
+                }
+            }
+    }
 
 
     suspend fun getPost(id: Long): Post = viewModelScope.async {

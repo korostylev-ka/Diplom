@@ -3,15 +3,13 @@ package ru.netology.nework.api
 import okhttp3.Interceptor
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.netology.nework.BuildConfig
-import ru.netology.nework.auth.AuthState
 import ru.netology.nework.dto.*
-import java.io.File
+
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/"
 
@@ -131,6 +129,27 @@ interface ApiService {
 
     @POST("my/jobs")
     suspend fun saveJob(@Body job: Job): Response<Job>
+
+    @DELETE("my/jobs/{id}")
+    suspend fun removeJobById(@Path("id") id: Long): Response<Unit>
+
+    //Для запросов MyWall
+    @GET("my/wall/{id}/before")
+    suspend fun myWallgetBefore(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Post>>
+
+    @GET("my/wall/{id}/after")
+    suspend fun myWallGetAfter(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Post>>
+
+    @GET("my/wall/latest")
+    suspend fun myWallGetLatest(@Query("count") count: Int): Response<List<Post>>
+
+
 
 
 }

@@ -6,47 +6,47 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import ru.netology.nework.api.ApiService
-import ru.netology.nework.dao.EventDao
-import ru.netology.nework.dao.EventRemoteKeyDao
+import ru.netology.nework.dao.PostDao
+import ru.netology.nework.dao.WallRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.entity.*
 import ru.netology.nework.error.ApiError
+//Класс для пагинации Wall
 
 //экспериментальная аннотация, чтобы код скомплеировался
 @OptIn(ExperimentalPagingApi::class)
-//переименовываем PostPagingSource в
-class EventRemoteMediator(
+class MyWallRemoteMediator(
     private val service: ApiService,
     private val db: AppDb,
-    private val eventDao: EventDao,
-    private val eventRemoteKeyDao: EventRemoteKeyDao,
-) : RemoteMediator<Int, EventEntity>() {
+    private val postDao: PostDao,
+    private val wallRemoteKeyDao: WallRemoteKeyDao,
+) : RemoteMediator<Int, WallEntity>() {
     override suspend fun load(
         //действие, которое хочет совершить пользователь(обновить, скроллить вверх или вниз)
         loadType: LoadType,
-        state: PagingState<Int, EventEntity>
+        state: PagingState<Int, WallEntity>
     ): MediatorResult {
         try {
             val response = when (loadType) {
                 //достаем размер страниц из экземпляра PagingState, config.pagesize
                 LoadType.REFRESH -> {
-                    service.getLatestEvents(state.config.pageSize)
+                    service.myWallGetLatest(state.config.pageSize)
                 }
                 //скроллинг вверх(запрос на получение верхней страницы). Ключ достаем из аргумента state(достаем последний элемент)
                 LoadType.PREPEND -> {
                     //меняем на чтение из базы данных
-                    val id = eventRemoteKeyDao.max() ?: return MediatorResult.Success(
+                    val id = wallRemoteKeyDao.max() ?: return MediatorResult.Success(
                         //конец страницы не достигнут
                         endOfPaginationReached = false
                     )
-                    service.getAfterEvents(id, state.config.pageSize)
+                    service.myWallGetAfter(id, state.config.pageSize)
                 }
                 //скроллинг вниз. Запрос на получение нижней страницы
                 LoadType.APPEND -> {
                     //берем из базы данных
-                    val id = eventRemoteKeyDao.min() ?: return MediatorResult.Success(
+                    val id = wallRemoteKeyDao.min() ?: return MediatorResult.Success(
                         endOfPaginationReached = false)
-                    service.getBeforeEvents(id, state.config.pageSize)
+                    service.myWallgetBefore(id, state.config.pageSize)
                 }
             }
 
@@ -63,19 +63,21 @@ class EventRemoteMediator(
                 //тип входных данных
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        //получаем id последнего события в базе из базы данных кючей
-                        val idLast = eventRemoteKeyDao.max()
-                        //записываем список ключей, первого и последнего события
-                        eventRemoteKeyDao.insert(
+                        //получаем id последнего поста в базе из базы данных кючей
+                        val idLast = wallRemoteKeyDao.max()
+                        //очищаем базу данных с ключами
+                        //wallRemoteKeyDao.removeAll()
+                        //записываем список ключей, первого и последнего поста
+                        wallRemoteKeyDao.insert(
                             listOf(
-                                EventRemoteKeyEntity(
-                                    type = EventRemoteKeyEntity.KeyType.AFTER,
+                                WallRemoteKeyEntity(
+                                    type = WallRemoteKeyEntity.KeyType.AFTER,
                                     id = body.first().id
                                 ),
-                                EventRemoteKeyEntity(
-                                    type = EventRemoteKeyEntity.KeyType.BEFORE,
-                                    /* Меняем ключ самого старого события в базе ключей с самого старого
-                                     во всем списке, пришедшего с сервера, на ключ самого свежего события,
+                                WallRemoteKeyEntity(
+                                    type = WallRemoteKeyEntity.KeyType.BEFORE,
+                                    /* Меняем ключ самого старого поста в базе ключей с самого старого
+                                     во всем списке, пришедшего с сервера, на ключ самого свежего поста,
                                      кторый есть в базе данных кдючей*/
                                     id = body.last().id,
                                 ),
@@ -84,24 +86,25 @@ class EventRemoteMediator(
                     }
                     //при скролле наверх запишем только ключ after
                     LoadType.PREPEND -> {
-                        eventRemoteKeyDao.insert(
-                            EventRemoteKeyEntity(
-                                type = EventRemoteKeyEntity.KeyType.AFTER,
+                        wallRemoteKeyDao.insert(
+                           WallRemoteKeyEntity(
+                                type = WallRemoteKeyEntity.KeyType.AFTER,
                                 id = body.first().id,
                             )
                         )
+
                     }
                     LoadType.APPEND -> {
-                        eventRemoteKeyDao.insert(
-                            EventRemoteKeyEntity(
-                                type = EventRemoteKeyEntity.KeyType.BEFORE,
+                        wallRemoteKeyDao.insert(
+                            WallRemoteKeyEntity(
+                                type = WallRemoteKeyEntity.KeyType.BEFORE,
                                 id = body.last().id,
                             )
                         )
                     }
                 }
                 //запишем в базу список элементов, который "пришел"
-                eventDao.insert(body.toEntity())
+                postDao.wallInsert(body.toWallEntity())
             }
             return MediatorResult.Success(endOfPaginationReached = body.isEmpty())
         } catch (e: Exception) {

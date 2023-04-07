@@ -1,26 +1,16 @@
 package ru.netology.nework.ui
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.crazylegend.audiopicker.audios.AudioModel
-import com.crazylegend.audiopicker.pickers.MultiAudioPicker
-import com.crazylegend.audiopicker.pickers.SingleAudioPicker
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
@@ -206,14 +196,7 @@ class NewPostFragment : Fragment() {
 
         }, viewLifecycleOwner)
 
-        binding.addUsers.setOnClickListener {
-            /*val myDialogFragment = DialogUsersSelectFragment()
-            val manager = parentFragmentManager
-            myDialogFragment.show(manager, "myDialog")*/
-            lifecycleScope.launchWhenCreated {
-                println("ЗАПРОС ${viewModel.getUsersNames()}")
-            }
-        }
+
 
         return binding.root
     }

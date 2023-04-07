@@ -4,22 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.databinding.FragmentEditPostBinding
 import ru.netology.nework.databinding.FragmentUserPageBinding
-import ru.netology.nework.util.LongArg
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.AuthViewModel
-import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
 
@@ -40,9 +34,10 @@ class UserPageFragment : Fragment() {
             false
 
         )
-        //проверяем фрагмент, и если это фрагмент работ, делаем статус кнопки "нажато"
+        //проверяем фрагмент, и если это фрагмент работ или стены, делаем статус кнопки "нажато"
         val fragment = requireParentFragment()
         if (fragment is FeedJobFragment) binding.jobButton.isPressed = true
+        if (fragment is FeedMyWallFragment) binding.wallButton.isPressed = true
 
 
         //В зависимости от того, зарегистрированы или нет, показываем панель данных пользователя
@@ -58,29 +53,23 @@ class UserPageFragment : Fragment() {
                         } else {
                             userAvatar.setImageResource(R.drawable.ic_avatar_black_48dp)
                         }
-                        userId.setText(auth.authStateFlow.value.id.toString())
-                        //переход на страницу постов
-                        wallButton.setOnClickListener {
-                            /*val fragment = requireParentFragment()
-                            //проверка текущего фрагмента
-                            if (fragment !is FeedPostFragment){
-                                findNavController().navigate(R.id.action_feedEventFragment_to_feedFragment)
-                            }*/
-
-                        }
+                        userId.setText(user.id.toString())
+                        userName.setText(user.name)
 
                         //переход на страницу job
                         jobButton.setOnClickListener {
                             val fragment = requireParentFragment()
-                            println("Fragment is $fragment")
-                            if (fragment is FeedJobFragment) binding.jobButton.isPressed = true
-
+                            //проверяем текущий фрагмент
+                            if (fragment is FeedMyWallFragment) binding.jobButton.isPressed = true
                             findNavController().navigate(R.id.feedJobFragment)
-                            /*val fragment = requireParentFragment()
-                            //проверка текущего фрагмента
-                            if (fragment !is FeedEventFragment) {
-                                findNavController().navigate(R.id.action_feedFragment_to_feedEventFragment)
-                            }*/
+                        }
+
+                        //переход на страницу myWall
+                        wallButton.setOnClickListener {
+                            val fragment = requireParentFragment()
+                            //проверяем текущий фрагмент
+                            if (fragment is FeedMyWallFragment) binding.wallButton.isPressed = true
+                            findNavController().navigate(R.id.feedMyWallFragment)
                         }
 
                     }

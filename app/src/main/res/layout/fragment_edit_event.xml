@@ -24,7 +24,6 @@
                 android:id="@+id/edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/common_spacing"
                 android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/common_spacing" />
@@ -32,7 +31,6 @@
                 android:id="@+id/dateTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/common_spacing"
                 android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/common_spacing" />
@@ -55,29 +53,26 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photoContainer"
+                android:layout_margin="@dimen/common_spacing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/photo"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/fabRemove"
+                    android:layout_height="0dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/fabRemove"
+                    app:layout_constraintTop_toBottomOf="@id/fabRemove"
                     android:contentDescription="@string/description_photo" />
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fabRemove"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/common_spacing"
                     android:clickable="true"
                     android:contentDescription="@string/description_remove_attachment"
                     android:focusable="true"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/photo"
+                    app:layout_constraintStart_toStartOf="@id/photo"
                     app:layout_constraintBottom_toTopOf="@id/photo"
                     style="@style/Widget.AppTheme.FabCancel"
                     app:srcCompat="@drawable/ic_remove_icon" />

@@ -63,10 +63,9 @@ class AppAuth @Inject constructor(
             putString(tokenKey, token)
             apply()
         }
-        //sendPushToken()
     }
 
-    ////удаление аутентификации
+    //удаление аутентификации
     @Synchronized
     fun removeAuth() {
         _authStateFlow.value = AuthState()
@@ -74,7 +73,6 @@ class AppAuth @Inject constructor(
             clear()
             apply()
         }
-        //sendPushToken()
     }
 
     fun sendPushToken(token: String? = null) {

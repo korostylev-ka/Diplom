@@ -1,18 +1,13 @@
 package ru.netology.nework.ui
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toFile
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -21,12 +16,9 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
-import ru.netology.nework.databinding.FragmentAuthBinding
 import ru.netology.nework.databinding.FragmentRegistrationBinding
 import ru.netology.nework.dto.Users
 import ru.netology.nework.ui.AuthFragment.Companion.textArg
-import ru.netology.nework.util.LongArg
-import ru.netology.nework.util.StringArg
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.AuthViewModel
 
@@ -35,9 +27,6 @@ import ru.netology.nework.viewmodel.AuthViewModel
 class RegFragment: Fragment() {
 
     private val viewModel: AuthViewModel by viewModels()
-
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +41,7 @@ class RegFragment: Fragment() {
         binding.login.requestFocus()
         binding.password.requestFocus()
         binding.userName.requestFocus()
-        binding.avatar.setImageResource(R.drawable.person_empty)
+        binding.avatar.setImageResource(R.drawable.ic_avatar_48dp)
 
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

@@ -10,12 +10,10 @@ import ru.netology.nework.api.ApiService
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.dao.UsersDao
+import ru.netology.nework.dao.WallRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.dto.*
-import ru.netology.nework.entity.PostEntity
-import ru.netology.nework.entity.UsersEntity
-import ru.netology.nework.entity.toDto
-import ru.netology.nework.entity.toEntity
+import ru.netology.nework.entity.*
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.AppError
@@ -31,6 +29,7 @@ class PostRepositoryImpl @Inject constructor(
     private val postDao: PostDao,
     private val usersDao: UsersDao,
     postRemoteKeyDao: PostRemoteKeyDao,
+    wallRemoteKeyDao: WallRemoteKeyDao,
     private val apiService: ApiService,
 ) : PostRepository {
 
@@ -41,8 +40,16 @@ class PostRepositoryImpl @Inject constructor(
         pagingSourceFactory = postDao::pagingSource,
     ).flow.map { pagingData ->
         pagingData.map(PostEntity::toDto)
+    }
 
-
+    //для Стены
+    @OptIn(ExperimentalPagingApi::class)
+    override val dataMyWall: Flow<PagingData<FeedItem>> = Pager(
+        config = PagingConfig(pageSize = 10),
+        remoteMediator = MyWallRemoteMediator(apiService, appDb, postDao, wallRemoteKeyDao,),
+        pagingSourceFactory = postDao::pagingSourceWall,
+    ).flow.map { pagingData ->
+        pagingData.map(WallEntity::toDto)
     }
 
     //список пользователей
@@ -125,6 +132,7 @@ class PostRepositoryImpl @Inject constructor(
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             postDao.insert(PostEntity.fromDto(body))
+            postDao.wallInsert(WallEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -136,6 +144,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun removeById(id: Long) {
         try {
             postDao.removeById(id)
+            postDao.wallRemoveById(id)
             val response = apiService.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
@@ -176,6 +185,8 @@ class PostRepositoryImpl @Inject constructor(
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             postDao.insert(PostEntity.fromDto(body))
+            postDao.wallInsert(WallEntity.fromDto(body))
+
 
         } catch (e: IOException) {
             throw NetworkError

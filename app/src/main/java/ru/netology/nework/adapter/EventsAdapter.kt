@@ -1,16 +1,12 @@
 package ru.netology.nework.adapter
 
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.MediaController
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
-
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -19,17 +15,11 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import ru.netology.nework.BuildConfig
 import ru.netology.nework.R
 import ru.netology.nework.databinding.CardEventBinding
-import ru.netology.nework.databinding.CardPostBinding
-import ru.netology.nework.databinding.HeaderBinding
-import ru.netology.nework.databinding.SeparatorDateItemBinding
 import ru.netology.nework.dto.*
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.enumeration.EventType
-import ru.netology.nework.ui.AuthFragment.Companion.textArg
-import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 
@@ -45,6 +35,7 @@ private val typeEvent = 1
 
 private val mediaObserver = MediaLifecycleObserver()
 
+//адаптер для событий
 class EventsAdapter(
     private val onInteractionListener: OnInteractionListenerEvent,
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(FeedItemDiffCallback()) {
@@ -92,11 +83,22 @@ class EventsAdapter(
                 if (event.coords != null) {
                     mapView.isVisible = true
                     mapView.map.move(
-                        CameraPosition(Point(event.coords.lat.toDouble(), event.coords.long.toDouble()), 11.0f, 0.0f, 0.0f),
+                        CameraPosition(
+                            Point(
+                                event.coords.lat.toDouble(),
+                                event.coords.long.toDouble()
+                            ), 11.0f, 0.0f, 0.0f
+                        ),
                         Animation(Animation.Type.SMOOTH, 0F),
-                        null)
+                        null
+                    )
                     //добавляем маркер на карту
-                    mapView.map.mapObjects.addPlacemark(Point(event.coords.lat.toDouble(), event.coords.long.toDouble()))
+                    mapView.map.mapObjects.addPlacemark(
+                        Point(
+                            event.coords.lat.toDouble(),
+                            event.coords.long.toDouble()
+                        )
+                    )
                 }
                 if (event.link != null) {
                     links.isVisible = true
@@ -134,6 +136,7 @@ class EventsAdapter(
                             }
                         }
                         AttachmentType.VIDEO -> {
+                            video.isVisible = true
                             video.apply {
                                 setMediaController(MediaController(context))
                                 setVideoURI(
@@ -146,7 +149,6 @@ class EventsAdapter(
                                     stopPlayback()
                                 }
                             }
-
                         }
 
                     }
@@ -155,14 +157,10 @@ class EventsAdapter(
                 if (event.authorAvatar != null) avatar.loadCircleCrop(event.authorAvatar)
                 else avatar.setImageResource(R.drawable.ic_avatar_48dp)
                 like.isChecked = event.likedByMe
-                //like.text = "${post.likes}"
-
                 menu.visibility = if (event.ownedByMe) View.VISIBLE else View.INVISIBLE
-
                 menu.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.options_post)
-                        // TODO: if we don't have other options, just remove dots
                         menu.setGroupVisible(R.id.owned, event.ownedByMe)
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
@@ -197,16 +195,13 @@ class EventsAdapter(
 
     class FeedItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
         override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
-            //проверяем ситуацию, когда у поста и разделителя может быть одинаковый id
             if (oldItem::class != newItem::class) {
                 return false
             }
-
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
-
             return oldItem == newItem
         }
     }

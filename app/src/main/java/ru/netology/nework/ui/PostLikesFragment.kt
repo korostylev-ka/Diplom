@@ -11,9 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import ru.netology.nework.R
 import ru.netology.nework.adapter.UsersAdapter
-
 import ru.netology.nework.databinding.FragmentPostLikesBinding
-import ru.netology.nework.dto.Users
 import ru.netology.nework.util.LongArg
 import ru.netology.nework.viewmodel.PostViewModel
 
@@ -27,7 +25,6 @@ class PostLikesFragment: Fragment() {
         fun createArguments(id: Long?): Bundle {
             return bundleOf(ID to id)
         }
-
 
     }
 
@@ -58,9 +55,6 @@ class PostLikesFragment: Fragment() {
 
             binding.listLikes.adapter = adapter
         }
-
-
-
 
         return binding.root
     }

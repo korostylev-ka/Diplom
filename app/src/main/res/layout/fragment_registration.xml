@@ -15,8 +15,8 @@
             android:layout_marginTop="@dimen/common_spacing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/description_logo"
             android:src="@drawable/logo">
-
         </ImageView>
         <TextView
             android:id="@+id/welcome"

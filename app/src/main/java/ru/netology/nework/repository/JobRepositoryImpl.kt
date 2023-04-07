@@ -1,14 +1,11 @@
 package ru.netology.nework.repository
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import okio.IOException
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.dao.JobDao
-import ru.netology.nework.dao.PostDao
-import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.dto.Job
 import ru.netology.nework.entity.JobEntity
@@ -60,4 +57,21 @@ class JobRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun removeById(id: Long) {
+        try {
+            jobDao.removeById(id)
+            val response = apiService.removeJobById(id)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+        } catch (e: java.io.IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
     }
+
+
+
+}

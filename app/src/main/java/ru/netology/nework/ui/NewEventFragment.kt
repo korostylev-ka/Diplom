@@ -9,8 +9,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -23,14 +21,11 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentNewEventBinding
-import ru.netology.nework.databinding.FragmentNewPostBinding
 import ru.netology.nework.util.AndroidUtils
 import ru.netology.nework.util.StringArg
 import ru.netology.nework.util.UriPathHelper
 import ru.netology.nework.viewmodel.EventViewModel
-import ru.netology.nework.viewmodel.PostViewModel
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 

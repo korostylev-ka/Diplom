@@ -6,7 +6,6 @@ import ru.netology.nework.dto.*
 
 interface EventRepository {
     val data: Flow<PagingData<FeedItem>>
-    suspend fun getAll()
     suspend fun getEventById(id: Long): Event
     fun getNewerCount(id: Long): Flow<Int>
     suspend fun save(event: Event, upload: MediaUpload?)

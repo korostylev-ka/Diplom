@@ -191,6 +191,14 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <!-- ПЕреход на фрагмент редактирования работы -->
+        <action
+            android:id="@+id/action_feedJobFragment_to_editJobFragment"
+            app:destination="@id/editJobFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <!--Фрагмент нового события -->
     <fragment
@@ -213,6 +221,13 @@
         android:label="fragment_new_job"
         tools:layout="@layout/fragment_new_job">
     </fragment>
+    <!-- Фрагмент редактирования Job -->
+    <fragment
+        android:id="@+id/editJobFragment"
+        android:name="ru.netology.nework.ui.EditJobFragment"
+        android:label="fragment_new_job"
+        tools:layout="@layout/fragment_new_job">
+    </fragment>
     <!-- Фрагмент списка лайков -->
     <fragment
         android:id="@+id/postLikesFragment"
@@ -224,6 +239,29 @@
         android:name="ru.netology.nework.ui.EventLikesFragment"
         android:label="fragment_event_likes"
         tools:layout="@layout/fragment_post_likes" />
+    <!--Фрагмент списка MyWall -->
+    <fragment
+        android:id="@+id/feedMyWallFragment"
+        android:name="ru.netology.nework.ui.FeedMyWallFragment"
+        android:label="fragment_feed_wall"
+        tools:layout="@layout/fragment_feed_wall"/>
+    <!--Переход на страницу лайков -->
+    <action
+        android:id="@+id/action_feedMyWallFragment_to_listLikesFragment"
+        app:destination="@id/postLikesFragment"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popEnterAnim="@android:anim/fade_in"
+        app:popExitAnim="@android:anim/fade_out" />
+    <!--Переход на страницу создания поста -->
+    <action
+        android:id="@+id/action_feedMyWallFragment_to_newPostFragment"
+        app:destination="@id/newPostFragment"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popEnterAnim="@android:anim/fade_in"
+        app:popExitAnim="@android:anim/fade_out" />
+
 
 
 

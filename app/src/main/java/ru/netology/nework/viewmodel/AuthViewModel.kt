@@ -8,18 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.auth.AuthState
 import ru.netology.nework.dto.MediaUpload
-import ru.netology.nework.dto.User
 import ru.netology.nework.dto.Users
 import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.NetworkError
@@ -42,8 +37,7 @@ class AuthViewModel @Inject constructor(private val auth: AppAuth, private val a
         get() = _photo
 
     fun changePhoto(uri: Uri?) {
-        _photo.value = PhotoModel(uri)
-    }
+        _photo.value = PhotoModel(uri)   }
 
 
     //авторизация по логину и паролю. В ответ получаем код ответа
@@ -65,8 +59,6 @@ class AuthViewModel @Inject constructor(private val auth: AppAuth, private val a
         } catch (e: Exception) {
             auth.removeAuth()
             //throw UnknownError
-
-
         }
         return code
     }
@@ -86,7 +78,6 @@ class AuthViewModel @Inject constructor(private val auth: AppAuth, private val a
 
         try {
             //запрос на сервер регистрации
-            println("ЗАПРОС НА РЕГИСТРАЦИЮ")
             val response = apiService.registrationCreate(login, password, name, multipartImage)
             //если пользователь существует (не 200 ответ)
             code = response.code()
@@ -108,9 +99,9 @@ class AuthViewModel @Inject constructor(private val auth: AppAuth, private val a
 
         } catch (e: Exception) {
             //auth.removeAuth()
-            //throw UnknownError
+            throw UnknownError
         }
-        return null
+
     }
 
     //получаем данные зарегистрированного пользователя

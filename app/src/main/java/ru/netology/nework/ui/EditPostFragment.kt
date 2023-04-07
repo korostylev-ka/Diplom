@@ -2,10 +2,8 @@ package ru.netology.nework.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.widget.MediaController
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
@@ -14,38 +12,21 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.PagingData
-import androidx.paging.filter
-import androidx.paging.map
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import hilt_aggregated_deps._ru_netology_nework_api_ApiServiceModule
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import ru.netology.nework.R
-
 import ru.netology.nework.databinding.FragmentEditPostBinding
-import ru.netology.nework.databinding.FragmentNewPostBinding
-import ru.netology.nework.dto.FeedItem
-import ru.netology.nework.dto.Post
 import ru.netology.nework.enumeration.AttachmentType
-import ru.netology.nework.ui.AuthFragment.Companion.textArg
 import ru.netology.nework.util.AndroidUtils
 import ru.netology.nework.util.LongArg
-import ru.netology.nework.util.StringArg
 import ru.netology.nework.util.UriPathHelper
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 import ru.netology.nework.viewmodel.PostViewModel
-import kotlin.system.measureNanoTime
+
 
 private const val ID = "id"
 
@@ -63,8 +44,6 @@ class EditPostFragment : Fragment() {
     private val viewModel: PostViewModel by activityViewModels()
 
     private var fragmentBinding: FragmentEditPostBinding? = null
-
-    private val mediaObserver = MediaLifecycleObserver()
 
     //переменная для редактируемого поста
     var postId: Long? = 0
@@ -115,8 +94,6 @@ class EditPostFragment : Fragment() {
                     else -> photo.isVisible = true
                 }
             }
-
-
 
             requireActivity().addMenuProvider(object : MenuProvider {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -258,7 +235,6 @@ class EditPostFragment : Fragment() {
             binding.photoContainer.visibility = View.VISIBLE
             binding.photo.setImageResource(R.drawable.ic_video_48dp)
         }
-
 
         return binding.root
     }

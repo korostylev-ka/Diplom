@@ -12,7 +12,11 @@ object PostDaoModule {
     @Provides
     fun providePostDao(db: AppDb): PostDao = db.postDao()
 
-    //добавляем зависимолсть
+    //добавляем зависимость
     @Provides
     fun providePostRemoteKeyDao(db: AppDb): PostRemoteKeyDao = db.postRemoteKeyDao()
+
+    //добавляем зависимость
+    @Provides
+    fun provideWallRemoteKeyDao(db: AppDb): WallRemoteKeyDao = db.wallRemoteKeyDao()
 }

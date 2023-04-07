@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textSize="@dimen/medium_size"
-        android:textColor="@color/red"
-        >
+        android:textColor="@color/red">
     </TextView>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_likes"

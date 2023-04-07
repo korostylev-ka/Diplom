@@ -6,6 +6,7 @@ import ru.netology.nework.dto.*
 
 interface PostRepository {
     val data: Flow<PagingData<FeedItem>>
+    val dataMyWall: Flow<PagingData<FeedItem>>
     val users: Flow<List<Users>>
     val usersNames: Flow<List<String>>
     suspend fun getAll()

@@ -21,51 +21,61 @@
 
             <EditText
                 android:id="@+id/name"
-                android:hint="name"
+                android:hint="@string/name_hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/common_spacing" />
             <EditText
                 android:id="@+id/position"
-                android:hint="enter position"
+                android:hint="@string/position_hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:background="@drawable/edit_text"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/common_spacing" />
+            <EditText
+                android:id="@+id/link"
+                android:hint="@string/link_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/common_spacing" />
             <EditText
                 android:id="@+id/dateTimeStart"
-                android:hint="date/time of start"
+                android:hint="@string/start_job_tint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/common_spacing" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/setDateStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:layout_marginHorizontal="@dimen/common_spacing"
+                app:icon="@drawable/ic_date_time_48dp"
                 android:text="@string/set_date_time">
-            </Button>
+            </com.google.android.material.button.MaterialButton>
             <EditText
                 android:id="@+id/dateTimeFinish"
-                android:hint="day/time of finish"
+                android:hint="@string/finish_job_tint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:background="@drawable/edit_text"
                 android:inputType="textMultiLine"
 
                 android:padding="@dimen/common_spacing" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/setDateFinish"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:layout_marginHorizontal="@dimen/common_spacing"
+                app:icon="@drawable/ic_date_time_48dp"
                 android:text="@string/set_date_time">
-            </Button>
+            </com.google.android.material.button.MaterialButton>
 
         </LinearLayout>
     </ScrollView>

@@ -5,29 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.*
-
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentFeedJobBinding
-import ru.netology.nework.databinding.FragmentFeedPostBinding
 import ru.netology.nework.dto.Job
-
-import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.JobRepository
-import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.JobViewModel
-import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -38,8 +29,6 @@ class FeedJobFragment : Fragment() {
     lateinit var auth: AppAuth
     private val viewModel: JobViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by viewModels()
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,19 +65,18 @@ class FeedJobFragment : Fragment() {
             }
         }
 
-
         val adapter = JobsAdapter(object : OnInteractionListener {
             //редактирование job
             override fun onEdit(job: Job) {
-                /*val bundle = Bundle()
+                val bundle = Bundle()
                 bundle.putLong("id", job.id)
                 //переходим на страницу редактирования, передавая в поле логин значение id поста
-                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, EditPostFragment.createArguments(post.id)
-                )*/
+                findNavController().navigate(R.id.action_feedJobFragment_to_editJobFragment, EditJobFragment.createArguments(job.id)
+                )
             }
 
             override fun onRemove(job: Job) {
-                //viewModel.removeById(post.id)
+                viewModel.removeById(job.id)
             }
 
             override fun onShare(job: Job) {
@@ -105,8 +93,6 @@ class FeedJobFragment : Fragment() {
 
         })
 
-
-
         binding.list.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
@@ -115,13 +101,9 @@ class FeedJobFragment : Fragment() {
             }
         }
 
-
-
-
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.newJobFragment)
         }
-
 
         return binding.root
     }

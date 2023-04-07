@@ -1,6 +1,5 @@
 package ru.netology.nework.dto
 
-import androidx.room.Embedded
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.enumeration.EventType
 

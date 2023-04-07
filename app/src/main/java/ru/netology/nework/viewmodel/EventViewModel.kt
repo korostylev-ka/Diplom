@@ -19,8 +19,6 @@ import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.PhotoModel
 import ru.netology.nework.model.VideoModel
 import ru.netology.nework.repository.EventRepository
-import ru.netology.nework.repository.PostRepository
-import ru.netology.nework.ui.EditPostFragment
 import ru.netology.nework.util.SingleLiveEvent
 import java.io.IOException
 import javax.inject.Inject
@@ -43,7 +41,6 @@ private val empty = Event(
     authorJob = null,
     coords = null,
     type = EventType.OFFLINE,
-    //users = null,
 )
 
 private val noPhoto = PhotoModel(null)
@@ -228,8 +225,6 @@ class EventViewModel @Inject constructor(
     }
 
     suspend fun getEvent(id: Long): Event = viewModelScope.async {
-        //EditPostFragment.getPost(repository.getPostById(id))
         repository.getEventById(id)
-
     }.await()
 }

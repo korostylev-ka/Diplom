@@ -16,12 +16,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.OnInteractionListenerPost
-
 import ru.netology.nework.adapter.PagingLoadStateAdapter
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentFeedPostBinding
-
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.viewmodel.AuthViewModel

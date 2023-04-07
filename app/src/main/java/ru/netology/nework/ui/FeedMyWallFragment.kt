@@ -15,23 +15,25 @@ import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
-import ru.netology.nework.adapter.*
+import ru.netology.nework.adapter.OnInteractionListenerPost
+import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.databinding.FragmentFeedEventBinding
-import ru.netology.nework.dto.Event
+import ru.netology.nework.databinding.FragmentFeedWallBinding
+import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.viewmodel.AuthViewModel
-import ru.netology.nework.viewmodel.EventViewModel
+import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
-class FeedEventFragment : Fragment() {
+class FeedMyWallFragment : Fragment() {
     @Inject
     lateinit var repository: PostRepository
 
     @Inject
     lateinit var auth: AppAuth
-    private val viewModel: EventViewModel by activityViewModels()
+    private val viewModel: PostViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
@@ -39,9 +41,7 @@ class FeedEventFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentFeedEventBinding.inflate(inflater, container, false)
-        //кнопка События нажата
-        binding.eventsButton.isPressed = true
+        val binding = FragmentFeedWallBinding.inflate(inflater, container, false)
 
         //переход на страницу постов
         binding.postsButton.setOnClickListener {
@@ -67,34 +67,33 @@ class FeedEventFragment : Fragment() {
                 if (authViewModel.authenticated) {
                     binding.userBar.visibility = View.VISIBLE
                     binding.fab.isVisible = true
-                    requireActivity().setTitle(R.string.events_list)
+                    requireActivity().setTitle(R.string.my_posts_list)
                 } else binding.userBar.visibility = View.GONE
             }
         }
 
-        val adapter = EventsAdapter(object : OnInteractionListenerEvent {
+        val adapter = PostsAdapter(object : OnInteractionListenerPost {
             //редактирование поста
-            override fun onEdit(event: Event) {
+            override fun onEdit(post: Post) {
                 val bundle = Bundle()
-                bundle.putLong("id", event.id)
-                //переходим на страницу редактирования, передавая в поле логин значение id события
-                findNavController().navigate(R.id.editEventFragment, EditPostFragment.createArguments(event.id)
+                bundle.putLong("id", post.id)
+                //переходим на страницу редактирования, передавая в поле логин значение id поста
+                findNavController().navigate(R.id.editPostFragment, EditPostFragment.createArguments(post.id)
                 )
-
             }
 
-            override fun onLike(event: Event) {
-                viewModel.like(event.id, event.likedByMe)
+            override fun onLike(post: Post) {
+                viewModel.like(post.id, post.likedByMe)
             }
 
-            override fun onRemove(event: Event) {
-                viewModel.removeById(event.id)
+            override fun onRemove(post: Post) {
+                viewModel.removeById(post.id)
             }
 
-            override fun onShare(event: Event) {
+            override fun onShare(post: Post) {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, event.content)
+                    putExtra(Intent.EXTRA_TEXT, post.content)
                     type = "text/plain"
                 }
 
@@ -103,27 +102,15 @@ class FeedEventFragment : Fragment() {
                 startActivity(shareIntent)
             }
 
-            override fun onOpenLikes(event: Event) {
-                findNavController().navigate(R.id.action_feedEventFragment_to_eventLikesFragment, EventLikesFragment.createArguments(event.id))
+            override fun onOpenLikes(post: Post) {
+                findNavController().navigate(R.id.action_feedMyWallFragment_to_listLikesFragment, PostLikesFragment.createArguments(post.id))
             }
         })
 
-
-        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
-            header = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
-                override fun onRetry() {
-                    adapter.retry()
-                }
-            }),
-            footer = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
-                override fun onRetry() {
-                    adapter.retry()
-                }
-            }),
-        )
+        binding.list.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest(adapter::submitData)
+            viewModel.myWallData.collectLatest(adapter::submitData)
         }
 
         lifecycleScope.launchWhenCreated {
@@ -138,9 +125,11 @@ class FeedEventFragment : Fragment() {
         binding.swiperefresh.setOnRefreshListener(adapter::refresh)
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_feedEventFragment_to_newEventFragment)
+            findNavController().navigate(R.id.action_feedMyWallFragment_to_newPostFragment)
         }
 
         return binding.root
     }
+
+
 }

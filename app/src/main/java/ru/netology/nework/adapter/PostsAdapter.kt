@@ -1,17 +1,12 @@
 package ru.netology.nework.adapter
 
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import android.widget.MediaController
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
-
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -20,15 +15,10 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import ru.netology.nework.BuildConfig
 import ru.netology.nework.R
 import ru.netology.nework.databinding.CardPostBinding
-import ru.netology.nework.databinding.HeaderBinding
-import ru.netology.nework.databinding.SeparatorDateItemBinding
 import ru.netology.nework.dto.*
 import ru.netology.nework.enumeration.AttachmentType
-import ru.netology.nework.ui.AuthFragment.Companion.textArg
-import ru.netology.nework.ui.EditPostFragment.Companion.longArgs
 import ru.netology.nework.view.loadCircleCrop
 import ru.netology.nework.viewmodel.MediaLifecycleObserver
 
@@ -126,6 +116,7 @@ class PostsAdapter(
                             }
                         }
                         AttachmentType.VIDEO -> {
+                            video.isVisible = true
                             video.apply {
                                 setMediaController(MediaController(context))
                                 setVideoURI(
@@ -146,11 +137,9 @@ class PostsAdapter(
                 else avatar.setImageResource(R.drawable.ic_avatar_48dp)
                 like.isChecked = post.likedByMe
                 menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
-
                 menu.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.options_post)
-                        // TODO: if we don't have other options, just remove dots
                         menu.setGroupVisible(R.id.owned, post.ownedByMe)
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
@@ -181,7 +170,6 @@ class PostsAdapter(
             }
         }
     }
-
 
     class FeedItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
         override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {

@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nework.entity.EventEntity
-import ru.netology.nework.entity.PostEntity
 
 @Dao
 interface EventDao {

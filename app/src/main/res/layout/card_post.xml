@@ -31,7 +31,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="@color/author_name"
-            android:textSize="@dimen/author_size"
+            android:textSize="@dimen/medium_size"
             app:layout_constraintBottom_toTopOf="@+id/published"
             app:layout_constraintEnd_toStartOf="@id/menu"
             app:layout_constraintStart_toEndOf="@id/avatar"
@@ -45,6 +45,8 @@
             android:layout_marginStart="@dimen/common_spacing"
             android:layout_marginEnd="@dimen/common_spacing"
             android:layout_marginBottom="@dimen/common_spacing"
+            android:textColor="@color/published"
+            android:textSize="@dimen/medium_size"
             app:layout_constraintBottom_toBottomOf="@id/header"
             app:layout_constraintEnd_toStartOf="@id/menu"
             app:layout_constraintStart_toEndOf="@id/avatar"
@@ -111,22 +113,21 @@
         <VideoView
             android:id="@+id/video"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="256dp"
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/common_spacing"
             android:contentDescription="@string/description_post_video"
             app:layout_constraintTop_toBottomOf="@id/attachment"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/mapView"/>
-
         <com.yandex.mapkit.mapview.MapView
             android:id="@+id/mapView"
             app:layout_constraintBottom_toTopOf="@id/footer"
-            app:layout_constraintTop_toBottomOf="@id/attachment_maps"
+            app:layout_constraintTop_toBottomOf="@id/video"
             android:visibility="gone"
+            android:contentDescription="@string/description_maps"
             android:layout_width="@dimen/map_size"
             android:layout_height="@dimen/map_size"/>
-
-
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/footer"
             android:layout_width="wrap_content"

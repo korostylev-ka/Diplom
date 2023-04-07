@@ -1,5 +1,7 @@
 package ru.netology.nework.ui
 
+import androidx.core.os.bundleOf
+import ru.netology.nework.util.LongArg
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -8,21 +10,20 @@ import android.widget.EditText
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentNewJobBinding
 import ru.netology.nework.util.AndroidUtils
-import ru.netology.nework.util.StringArg
 import ru.netology.nework.viewmodel.JobViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+private const val ID = "id"
 
-//фрагмент создания нового события
+//фрагмент редактирования работ
 @AndroidEntryPoint
-class NewJobFragment: Fragment() {
+class EditJobFragment: Fragment() {
     //функция установки даты и времени события
     @SuppressLint("SimpleDateFormat")
     private fun pickDateTime(editText: EditText) {
@@ -32,23 +33,32 @@ class NewJobFragment: Fragment() {
         val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
         //устанавливаем только дату
         DatePickerDialog(requireContext(),{ _, year, month, day ->
-                val pickedDateTime = Calendar.getInstance()
-                pickedDateTime.set(year, month, day)
-                val dateTimeLong = pickedDateTime.timeInMillis
-                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(dateTimeLong)
-                //присваиваем полю значение времени
-                editText.setText(date)
+            val pickedDateTime = Calendar.getInstance()
+            pickedDateTime.set(year, month, day)
+            val dateTimeLong = pickedDateTime.timeInMillis
+            val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(dateTimeLong)
+            //присваиваем полю значение времени
+            editText.setText(date)
         }, startYear, startMonth, startDay).show()
 
     }
 
+    //для передачи данных
     companion object {
-        var Bundle.textArg: String? by StringArg
+        var Bundle.longArgs: Long by LongArg
+        fun createArguments(id: Long?): Bundle {
+            return bundleOf(ID to id)
+        }
+
     }
 
     private val viewModel: JobViewModel by activityViewModels()
 
     private var fragmentBinding: FragmentNewJobBinding? = null
+
+    //переменная для получения id редактируемой работы
+    var jobId: Long? = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,11 +72,22 @@ class NewJobFragment: Fragment() {
         )
         fragmentBinding = binding
 
-
         binding.name.requestFocus()
         binding.position.requestFocus()
-        binding.link.requestFocus()
 
+        jobId = requireArguments().getLong(ID)
+        //получаем нужную работу
+        val job = viewModel.data.value!!.jobs.filter {
+            it.id == jobId
+        }.firstOrNull()
+
+        binding.apply {
+            name.setText(job!!.name)
+            position.setText(job!!.position)
+            link.setText(job?.link)
+            dateTimeStart.setText(job!!.start)
+            dateTimeFinish.setText(job?.finish)
+        }
 
         //обработка нажатия установки даты start
         binding.setDateStart.setOnClickListener {
@@ -77,13 +98,8 @@ class NewJobFragment: Fragment() {
         //обработка нажатия установки даты finish
         binding.setDateFinish.setOnClickListener {
             pickDateTime(binding.dateTimeFinish)
-
         }
 
-        lifecycleScope.launchWhenCreated {
-            //устанока заголовка
-            requireActivity().setTitle(R.string.new_job)
-        }
 
         viewModel.jobCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
@@ -103,17 +119,12 @@ class NewJobFragment: Fragment() {
                             //передаем текст события и даты
                             val name = it.name.text.toString()
                             val position = it.position.text.toString()
-                            var link: String? = null
                             val dateStart = it.dateTimeStart.text.toString()
-                            var dateFinish: String? = null
+                            var dateFinish: String? = it.dateTimeFinish.text.toString()
                             if (!it.dateTimeFinish.text.isEmpty()) {
-                                dateFinish = it.dateTimeFinish.text.toString()
-                            }
-                            if (!it.link.text.isEmpty()) {
-                                link = it.link.text.toString()
-                            }
-                            viewModel.changeJob(name, position, dateStart, dateFinish, link)
-                            viewModel.save()
+                                dateFinish = it.dateTimeFinish.text.toString()}
+                            val jobEdited = job!!.copy(name = name, position = position, start = dateStart, finish = dateFinish)
+                            viewModel.edit(jobEdited)
                             AndroidUtils.hideKeyboard(requireView())
                         }
                         true
